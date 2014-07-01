@@ -1,4 +1,3 @@
-__author__ = 'abel'
 import classes.structure as structure
 import numpy as np
 
@@ -21,7 +20,7 @@ def reading_from_file(file_name):
         atomic_elements.append(line[1])
         atom_types.append(line[5])
         connectivity.append([int(f) for f in line[6:]])
-    #    print(np.array(coordinates,dtype=float))
+    # print(np.array(coordinates,dtype=float))
 
     return structure.Structure(coordinates=np.array(coordinates, dtype=float),
                                atom_types=np.array(atom_types, dtype=int)[None].T,
@@ -35,11 +34,8 @@ def write_molecule_to_xyz(molecule, xyz_file):
     xyz_file.write(str(molecule.get_number_of_atoms()) + '\n\n')
 
     for i in range(molecule.get_number_of_atoms()):
-        line = str([list(molecule.get_atomic_elements()[i]) +
-                    list(molecule.get_coordinates()[i])]) \
-            .strip('[]').replace(',', '').replace("'", "")
-
-        xyz_file.write(line + '\n')
+        xyz_file.write(molecule.get_atomic_elements()[i][0] +
+                       "\t{0:10.6f} {1:10.6f} {2:10.6f}\n".format(*molecule.get_coordinates()[i]))
 
     return xyz_file
 
@@ -51,11 +47,12 @@ def write_result_trajectory(trajectory, file_name):
 
     xyz_file.close()
 
+
 def write_result_to_file(result, file_name):
     result_file = open(file_name, 'w')
 
-    for i,j in zip(result.energy,result.acceptation_ratio_vector):
-        result_file.write("{0:10.4f}\t{1:5.4f}\n".format(i,j))
+    for i, j in zip(result.energy, result.acceptation_ratio_vector):
+        result_file.write("{0:10.4f}\t{1:5.4f}\n".format(i, j))
 
     result_file.close()
 

@@ -33,6 +33,9 @@ def average_derivative(vector):
 def adjust_expansion_factor(acceptation_vector, conditions):
     last_acceptation_vector = acceptation_vector[-conditions.number_of_vales_for_average:]
 
+    if len(last_acceptation_vector) < conditions.number_of_vales_for_average:
+        return conditions.expansion_factor
+
     current_derivative = average_derivative(last_acceptation_vector)
     A = conditions.acceptation_regulator
     target_derivative = -A * 2 ** 3 * (acceptation_vector[-1] - 0.5) ** 3

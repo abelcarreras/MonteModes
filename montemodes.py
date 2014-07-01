@@ -18,7 +18,7 @@ conditions2 = res.Conditions(temperature=100,
 
 molecule = io_monte.reading_from_file('Data/bife_raro.txyz')
 conditions = res.Conditions(temperature=200,
-                            number_of_cycles=1000,
+                            number_of_cycles=1065,
                             initial_expansion_factor=0.15,
                             number_of_modes_to_use=10)
 

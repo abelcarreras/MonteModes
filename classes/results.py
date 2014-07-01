@@ -121,7 +121,7 @@ class Conditions:
                  initial_expansion_factor=None,
                  acceptation_regulator = 0.1,
                  number_of_modes_to_use=None,
-                 number_of_values_for_average=10):
+                 number_of_values_for_average=50):
 
         self._number_of_cycles = number_of_cycles
         self._temperature = temperature
