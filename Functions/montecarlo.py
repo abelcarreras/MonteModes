@@ -48,14 +48,16 @@ def adjust_expansion_factor(acceptation_vector, conditions):
     return conditions.expansion_factor * Final
 
 
-def calculate_MonteCarlo(initial_molecule, conditions, vibration):
-    print 'Temperature', conditions.temperature
+def calculate_MonteCarlo(initial_molecule, conditions, vibration, result=None):
 
-    # accepted = 0
-    result = res.MonteCarlo('Monte Carlo Simulation')
+    if result is None:
+        result = res.MonteCarlo('Monte Carlo Simulation')
+
     molecule = copy.deepcopy(initial_molecule)
 
-    for iteration in range(conditions.number_of_cycles):
+    print 'Temperature', conditions.temperature
+
+    for iteration in range(result.number_of_cycles, result.number_of_cycles + conditions.number_of_cycles):
 
         result.append_data_from_molecule(molecule)
         conditions.expansion_factor = adjust_expansion_factor(result.acceptation_ratio_vector, conditions)

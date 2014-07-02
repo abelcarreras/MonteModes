@@ -83,6 +83,7 @@ class MonteCarlo:
     def number_of_data(self):
         return len(self._trajectory)
 
+    @property
     def number_of_cycles(self):
         return self._number_of_cycles
 

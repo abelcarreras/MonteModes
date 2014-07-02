@@ -1,5 +1,6 @@
 import classes.structure as structure
 import numpy as np
+import pickle
 
 
 def reading_from_file(file_name):
@@ -57,3 +58,19 @@ def write_result_to_file(result, file_name):
     result_file.close()
 
     return 0
+
+
+def save_to_dump(conditions, result,filename='continue.obj'):
+    dump_file = open(filename, 'w')
+    pickle.dump(conditions, dump_file)
+    pickle.dump(result, dump_file)
+    dump_file.close()
+
+
+def load_from_dump(filename='continue.obj'):
+    dump_file = open(filename, 'r')
+    conditions = pickle.load(dump_file)
+    results = pickle.load(dump_file)
+    dump_file.close()
+
+    return conditions, results
