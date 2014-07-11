@@ -5,28 +5,31 @@ import classes.results as res
 import matplotlib.pyplot as plt
 
 
-molecule = io_monte.reading_from_file('Data/bife_raro.txyz')
+#Define initial conditions
+molecule = io_monte.reading_from_file('Data/bifenil2.txyz')
 conditions = res.Conditions(temperature=200,
-                            number_of_cycles=10,
-                            initial_expansion_factor=0.15,
-                            number_of_modes_to_use=10)
+                            number_of_cycles=300,
+                            initial_expansion_factor=30,
+                            number_of_modes_to_use=10,
+                            acceptation_regulator=0.2,
+)
 
+simulation = res.MonteCarlo(molecule)
 
-#continue rutine
+#continue routine
 if True:
-    conditions,last_result = io_monte.load_from_dump()
-    conditions._number_of_cycles = 20
-    molecule = last_result.trajectory[-1]
+    conditions, simulation = io_monte.load_from_dump()
+    conditions.number_of_cycles = 300
+#    conditions.expansion_factor = 0.003 #simulation.acceptation_ratio
 
 #Show initial energy
 energy = calculate.get_energy_from_tinker(molecule)
 print 'Initial Energy:', energy
 
-#Calculate initial vibrational analysis
-vibration = calculate.get_modes_from_tinker(molecule)
+
 
 #Perform Monte Carlo simulation
-result = monte.calculate_MonteCarlo(molecule, conditions, vibration, result=last_result)
+result = monte.calculate_MonteCarlo(simulation, conditions)
 
 #Show result plot
 plt.plot(result.energy)
@@ -34,7 +37,6 @@ plt.show()
 
 plt.plot(result.acceptation_ratio_vector)
 plt.show()
-
 
 #Save results to data files
 io_monte.write_result_to_file(result, 'test.out')

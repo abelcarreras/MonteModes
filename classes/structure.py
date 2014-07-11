@@ -1,5 +1,4 @@
 __author__ = 'abel'
-import numpy as np
 import Functions.calculate as calc
 
 
@@ -66,7 +65,7 @@ class Structure:
 
     def get_number_of_atoms(self):
         if self._number_of_atoms is None and self._coordinates is not None:
-            self._number_of_atoms = np.array(self._coordinates).shape[0]
+            self._number_of_atoms = self._coordinates.shape[0]
 
         return self._number_of_atoms
 

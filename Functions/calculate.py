@@ -8,8 +8,9 @@ force_filed = 'mm3.prm'
 
 
 def create_tinker_input(molecule):
-    tinker_input_file = tempfile.NamedTemporaryFile(delete=False)
-    # print(tinker_input_file.name)
+    temp_file_name = tempfile.gettempdir() + '/' + str(os.getpid())
+    tinker_input_file = open(temp_file_name,mode='w')
+#    print(tinker_input_file.name)
 
     tinker_input_file.write(str(molecule.get_number_of_atoms()) + '\n')
     for i in range(molecule.get_number_of_atoms()):
@@ -36,14 +37,19 @@ def get_energy_from_tinker(molecule):
     tinker_command = 'Data/analyze ' + tinker_input_file.name + \
                      ' Data/' + force_filed + ' E -k ' + key_file_name
 
+
     tinker_process = subprocess.Popen(tinker_command, stdout=subprocess.PIPE, shell=True)
     (output, err) = tinker_process.communicate()
-
     tinker_process.wait()
-
     os.unlink(tinker_input_file.name)
 
-    return float(output[output.find('Total Potential Energy'):].replace('D','E').split()[4])
+    try:
+        energy = float(output[output.find('Total Potential Energy'):].replace('D','E').split()[4])
+    except IndexError:
+        print('Failed trying to get energy from tinker output')
+        energy = 1E20
+
+    return energy
 
 
 def get_modes_from_tinker(molecule):

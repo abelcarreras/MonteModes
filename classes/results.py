@@ -2,7 +2,6 @@ from __future__ import division
 import numpy as np
 import copy as cp
 
-
 def normalize_modes(modes):
 
     normalized_modes = cp.deepcopy(modes)
@@ -52,18 +51,14 @@ class Vibration:
 
 
 class MonteCarlo:
-    def __init__(self, title):
+    def __init__(self, molecule):
         self._energy = None
         self._trajectory = []
         self._acceptation_ratio_vector = []
         self._number_of_cycles = 0
-        self._accepted = 0
-        self._title = title
+        self._accepted_vector = [0]
         self._acceptation_ratio = 0
-
-    @property
-    def title(self):
-        return self._title
+        self._trajectory.append(molecule)
 
     @property
     def trajectory(self):
@@ -87,25 +82,43 @@ class MonteCarlo:
     def number_of_cycles(self):
         return self._number_of_cycles
 
+    @number_of_cycles.setter
+    def number_of_cycles(self, number_of_cycles):
+        self._number_of_cycles = number_of_cycles
+
     def append_data_from_molecule(self, molecule):
         # self._energy.append(molecule.get_energy())
         self._energy = None
         self._trajectory.append(molecule)
-        self._acceptation_ratio_vector.append(self.acceptation_ratio)
 
     @property
     def acceptation_ratio(self):
-        if self._number_of_cycles > 0:
-            self._acceptation_ratio = float(self._accepted/self._number_of_cycles)
         return self._acceptation_ratio
-
     @property
     def acceptation_ratio_vector(self):
         return self._acceptation_ratio_vector
 
+    def update_acceptation_vector(self, iteration):
+        number_average = 50
+        if iteration > 0:
+#            print(self._accepted_vector[-number_average:])
+#            self._acceptation_ratio = float(len(self._accepted_vector[-number_average:]) / (iteration - self._accepted_vector[-number_average:][0]))
+#            self._acceptation_ratio_vector.append(self._acceptation_ratio)
+#        print(self._acceptation_ratio_vector)
+
+            for k in reversed(range(len(self._accepted_vector))):
+                if self._accepted_vector[k] < (iteration - number_average) or k == 0:
+                    self._acceptation_ratio = float(len(self._accepted_vector[k:])/(min(number_average,iteration)+1))
+                    break
+
+            self._acceptation_ratio_vector.append(self._acceptation_ratio)
+
+
+
+
     def add_accepted(self, iteration):
-        self._accepted += 1
-        self._number_of_cycles = iteration + 1
+        self._accepted_vector.append(iteration)
+#        print(self._accepted_vector)
 
     def clear_data(self):
         self._energy = None
@@ -120,9 +133,9 @@ class Conditions:
                  temperature_frequency_relation=0.694989, #K/cm
                  temperature=None,
                  initial_expansion_factor=None,
-                 acceptation_regulator = 0.1,
+                 acceptation_regulator = 1.0,
                  number_of_modes_to_use=None,
-                 number_of_values_for_average=50):
+                 number_of_values_for_average=20):
 
         self._number_of_cycles = number_of_cycles
         self._temperature = temperature
