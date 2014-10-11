@@ -6,6 +6,7 @@ import Functions.montecarlo as monte
 import classes.results as res
 import matplotlib.pyplot as plt
 import math
+
 #Define initial conditions
 import copy
 def alteration_following_mode(molecule, vibration, displacement_value,index):

@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 #Define initial conditions
 molecule = io_monte.reading_from_file('Data/bifenil2.txyz')
-conditions = res.Conditions(temperature=200,
+conditions = res.Conditions(temperature=20,
                             number_of_cycles=300,
                             initial_expansion_factor=30,
                             number_of_modes_to_use=10,
@@ -20,6 +20,7 @@ simulation = res.MonteCarlo(molecule)
 if True:
     conditions, simulation = io_monte.load_from_dump()
     conditions.number_of_cycles = 300
+    conditions.acceptation_regulator = 0.2
 #    conditions.expansion_factor = 0.003 #simulation.acceptation_ratio
 
 #Show initial energy
