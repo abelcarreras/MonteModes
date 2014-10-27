@@ -70,14 +70,10 @@ def calculate_MonteCarlo(simulation, conditions):
     print 'Temperature', conditions.temperature
     print('Starting at:',simulation.number_of_cycles)
     for iteration in range(simulation.number_of_cycles, simulation.number_of_cycles + conditions.number_of_cycles):
-#        print(iteration)
+
         simulation.update_acceptation_vector(iteration)
-
         simulation.append_data_from_molecule(molecule)
- #       print(simulation.acceptation_ratio(iteration))
-
         conditions.expansion_factor = adjust_expansion_factor(simulation.acceptation_ratio_vector, conditions)
-
         molecule_altered = alteration_with_modes(molecule, vibration, conditions)
 
         print(molecule.get_energy(), molecule_altered.get_energy(), simulation.acceptation_ratio)
@@ -85,7 +81,6 @@ def calculate_MonteCarlo(simulation, conditions):
         if molecule.get_energy() < molecule_altered.get_energy():
             energy_ratio = math.exp((molecule.get_energy() - molecule_altered.get_energy())
                                     / (conditions.temperature * conditions.kb))
-
             if energy_ratio < random.random():
                 continue
 

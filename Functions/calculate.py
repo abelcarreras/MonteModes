@@ -2,15 +2,15 @@ import tempfile
 import numpy as np
 import subprocess
 import classes.results as res
-import os
+import os, glob
 
 force_filed = 'mm3.prm'
 
 
 def create_tinker_input(molecule):
-    temp_file_name = tempfile.gettempdir() + '/' + str(os.getpid())
+#    temp_file_name = tempfile.gettempdir() + '_' + str(os.getpid())
+    temp_file_name = tempfile.gettempdir() + '/tinker_temp'+ '_' + str(os.getpid())
     tinker_input_file = open(temp_file_name,mode='w')
-#    print(tinker_input_file.name)
 
     tinker_input_file.write(str(molecule.get_number_of_atoms()) + '\n')
     for i in range(molecule.get_number_of_atoms()):
@@ -29,7 +29,6 @@ def create_tinker_input(molecule):
 
 def get_energy_from_tinker(molecule):
     tinker_input_file = create_tinker_input(molecule)
-
     key_file_name = os.path.splitext(molecule.file_name)[0] + '.key'
     if not os.path.isfile(key_file_name):
         key_file_name = ''
@@ -81,5 +80,8 @@ def get_modes_from_tinker(molecule):
                                 modes=np.array(modes))
     #    print(np.array(frequencies)[1])
     #    print(np.array(modes)[2])
+    for filePath in glob.glob(tinker_input_file.name+".*"):
+        if os.path.isfile(filePath):
+            os.remove(filePath)
 
     return total_modes

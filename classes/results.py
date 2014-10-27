@@ -99,26 +99,27 @@ class MonteCarlo:
         return self._acceptation_ratio_vector
 
     def update_acceptation_vector(self, iteration):
-        number_average = 50
+        max_acceptation_ratio_vector = 1000000
+        number_average = 2000
         if iteration > 0:
 #            print(self._accepted_vector[-number_average:])
 #            self._acceptation_ratio = float(len(self._accepted_vector[-number_average:]) / (iteration - self._accepted_vector[-number_average:][0]))
 #            self._acceptation_ratio_vector.append(self._acceptation_ratio)
-#        print(self._acceptation_ratio_vector)
-
+#            print(self._acceptation_ratio_vector)
             for k in reversed(range(len(self._accepted_vector))):
                 if self._accepted_vector[k] < (iteration - number_average) or k == 0:
                     self._acceptation_ratio = float(len(self._accepted_vector[k:])/(min(number_average,iteration)+1))
                     break
 
             self._acceptation_ratio_vector.append(self._acceptation_ratio)
-
+            self._acceptation_ratio_vector = self._acceptation_ratio_vector [-max_acceptation_ratio_vector:]
 
 
 
     def add_accepted(self, iteration):
+        max_accepted_vector_length = 1000000
         self._accepted_vector.append(iteration)
-#        print(self._accepted_vector)
+        self._accepted_vector = self._accepted_vector[-max_accepted_vector_length:]
 
     def clear_data(self):
         self._energy = None
@@ -135,7 +136,7 @@ class Conditions:
                  initial_expansion_factor=None,
                  acceptation_regulator = 1.0,
                  number_of_modes_to_use=None,
-                 number_of_values_for_average=20):
+                 number_of_values_for_average=5000):  #number_of_values_for_average not implemented yet
 
         self._number_of_cycles = number_of_cycles
         self._temperature = temperature
