@@ -10,18 +10,21 @@ molecule = io_monte.reading_from_file('Data/ethane.txyz')
 conditions = res.Conditions(temperature=100,
                             number_of_cycles=300,
                             initial_expansion_factor=30,
-                            number_of_modes_to_use=10,
+                            number_of_modes_to_use=5,
                             acceptation_regulator=0.1,
-                            number_of_values_for_average=50,
+                            number_of_values_for_average=100,
 )
 
 simulation = res.MonteCarlo(molecule)
 
 #continue routine
-if False:
+if True:
+    print('Recovering...')
     conditions, simulation = io_monte.load_from_dump()
-    conditions.number_of_cycles = 300
+    conditions.number_of_cycles = 3000
+#    conditions.temperature = 10
     conditions.acceptation_regulator = 0.1
+    conditions.number_of_vales_for_average = 100
 #    conditions.expansion_factor = 0.003 #simulation.acceptation_ratio
 
 #Show initial energy

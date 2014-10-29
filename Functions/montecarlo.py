@@ -71,7 +71,7 @@ def calculate_MonteCarlo(simulation, conditions):
     print('Starting at:',simulation.number_of_cycles)
     for iteration in range(simulation.number_of_cycles, simulation.number_of_cycles + conditions.number_of_cycles):
 
-        simulation.update_acceptation_vector(iteration)
+        simulation.update_acceptation_vector(iteration,conditions)
         simulation.append_data_from_molecule(molecule)
         conditions.expansion_factor = adjust_expansion_factor(simulation.acceptation_ratio_vector, conditions)
         molecule_altered = alteration_with_modes(molecule, vibration, conditions)
@@ -85,7 +85,7 @@ def calculate_MonteCarlo(simulation, conditions):
                 continue
 
         molecule = molecule_altered
-        simulation.add_accepted(iteration)
+        simulation.add_accepted(iteration,conditions)
         vibration = calculate.get_modes_from_tinker(molecule)
 
     simulation.number_of_cycles += conditions.number_of_cycles

@@ -98,26 +98,28 @@ class MonteCarlo:
     def acceptation_ratio_vector(self):
         return self._acceptation_ratio_vector
 
-    def update_acceptation_vector(self, iteration):
-        max_acceptation_ratio_vector = 1000000
-        number_average = 2000
+    def update_acceptation_vector(self, iteration, conditions):
+
+        number_average = conditions.number_of_vales_for_average
+ #       print('-----')
+ #       print(self._accepted_vector)
+ #       print(number_average)
+ #       print(iteration)
+
         if iteration > 0:
-#            print(self._accepted_vector[-number_average:])
-#            self._acceptation_ratio = float(len(self._accepted_vector[-number_average:]) / (iteration - self._accepted_vector[-number_average:][0]))
-#            self._acceptation_ratio_vector.append(self._acceptation_ratio)
-#            print(self._acceptation_ratio_vector)
-            for k in reversed(range(len(self._accepted_vector))):
-                if self._accepted_vector[k] < (iteration - number_average) or k == 0:
-                    self._acceptation_ratio = float(len(self._accepted_vector[k:])/(min(number_average,iteration)+1))
+ #           for k in reversed(range(len(self._accepted_vector))):
+            for k in range(len(self._accepted_vector)-1,-1,-1):
+                if self._accepted_vector[k] <= (iteration - number_average) or k == 0:
+                    self._acceptation_ratio = float(len(self._accepted_vector[k+1:]))/min(iteration+1,number_average)
+ #                   print('k',k,len(self._accepted_vector[k+1:]),min(iteration+1,number_average))
                     break
 
             self._acceptation_ratio_vector.append(self._acceptation_ratio)
-            self._acceptation_ratio_vector = self._acceptation_ratio_vector [-max_acceptation_ratio_vector:]
+ #           self._acceptation_ratio_vector = self._acceptation_ratio_vector [-max_acceptation_ratio_vector:]
 
 
-
-    def add_accepted(self, iteration):
-        max_accepted_vector_length = 1000000
+    def add_accepted(self, iteration, conditions):
+        max_accepted_vector_length = conditions.number_of_vales_for_average
         self._accepted_vector.append(iteration)
         self._accepted_vector = self._accepted_vector[-max_accepted_vector_length:]
 
@@ -136,7 +138,7 @@ class Conditions:
                  initial_expansion_factor=None,
                  acceptation_regulator = 1.0,
                  number_of_modes_to_use=None,
-                 number_of_values_for_average=5000):  #number_of_values_for_average not implemented yet
+                 number_of_values_for_average=2000):  #number_of_values_for_average not implemented yet
 
         self._number_of_cycles = number_of_cycles
         self._temperature = temperature
