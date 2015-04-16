@@ -20,7 +20,7 @@ def alteration_following_mode(molecule, vibration, displacement_value,index):
 
     return altered_molecule
 
-molecule = io_monte.reading_from_file('Data/bife_raro.txyz')
+molecule = io_monte.reading_from_txyz_file('Data/bife_raro.txyz')
 
 ene = []
 ene2 =[]

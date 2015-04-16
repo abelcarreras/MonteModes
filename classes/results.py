@@ -2,6 +2,7 @@ from __future__ import division
 import numpy as np
 import copy as cp
 
+
 def normalize_modes(modes):
 
     normalized_modes = cp.deepcopy(modes)
@@ -54,7 +55,7 @@ class MonteCarlo:
     def __init__(self, molecule):
         self._energy = None
         self._trajectory = []
-        self._acceptation_ratio_vector = []
+        self._acceptation_ratio_vector = [0]
         self._number_of_cycles = 0
         self._accepted_vector = [0]
         self._acceptation_ratio = 0
@@ -71,7 +72,7 @@ class MonteCarlo:
     @property
     def energy(self):
         if self._energy is None:
-            self._energy = [self.trajectory[i].get_energy() for i in range(self.number_of_data)]
+            self._energy = [self.trajectory[i].get_energy() for i in range(1, self.number_of_data)]
         return self._energy
 
     @property
@@ -138,7 +139,8 @@ class Conditions:
                  initial_expansion_factor=None,
                  acceptation_regulator = 1.0,
                  number_of_modes_to_use=None,
-                 number_of_values_for_average=2000):  #number_of_values_for_average not implemented yet
+                 number_of_values_for_average=2000,
+                 energy_method = 1):
 
         self._number_of_cycles = number_of_cycles
         self._temperature = temperature
@@ -148,6 +150,15 @@ class Conditions:
         self._number_of_modes_to_use = number_of_modes_to_use
         self._number_of_vales_for_average = number_of_values_for_average
         self._acceptation_regulator = acceptation_regulator
+        self._energy_method = energy_method
+
+    @property
+    def energy_method(self):
+        return self._energy_method
+
+    @energy_method.setter
+    def energy_method(self, method):
+        self._energy_method = method
 
     @property
     def temperature(self):

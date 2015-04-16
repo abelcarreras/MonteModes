@@ -3,14 +3,69 @@ import Functions.calculate as calculate
 import Functions.montecarlo as monte
 import classes.results as res
 import matplotlib.pyplot as plt
+import Functions.methods as meth
 
 
+gaussian_pm3 = meth.gaussian()
+tinker_mm3 = meth.tinker()
+
+conditions = res.Conditions(temperature=500,
+                            number_of_cycles=50,
+                            initial_expansion_factor=0.05,
+                            acceptation_regulator=0.1,
+                            number_of_values_for_average=50,
+                            energy_method=tinker_mm3)
+
+#molecule = io_monte.reading_from_xyz_file('test.xyz')
+molecule = io_monte.reading_from_txyz_file('Data/ethane.txyz')
+
+simulation = res.MonteCarlo(molecule)
+result = monte.calculate_MonteCarlo_cartesian(simulation, conditions)
+
+#Show result plot
+plt.plot(result.energy)
+plt.show()
+
+plt.plot(result.acceptation_ratio_vector)
+plt.show()
+
+
+io_monte.write_result_to_file(result, 'test.out')
+io_monte.write_result_trajectory(result.trajectory, 'out.xyz')
+
+
+
+exit()
+#conditions, simulation = io_monte.load_from_dump(filename='continue.obj')
+#io_monte.write_result_to_file(simulation, 'test.out')
+#io_monte.write_result_trajectory(simulation.trajectory, 'hf_1500.int', type='int')
+
+#exit()
+
+conditions = res.Conditions(temperature=500,
+                            number_of_cycles=5,
+                            initial_expansion_factor=1,
+                            energy_method=2,
+                            acceptation_regulator=0.1,
+                            number_of_values_for_average=50)
+
+molecule = io_monte.reading_from_gzmat_file('test.gzmat')
+
+simulation = res.MonteCarlo(molecule)
+result = monte.calculate_MonteCarlo_internal(simulation, conditions)
+
+
+io_monte.write_result_to_file(result, 'test.out')
+io_monte.write_result_trajectory(result.trajectory, 'test.xyz')
+io_monte.write_result_trajectory(result.trajectory, 'test.int', type='int')
+
+exit()
 #Define initial conditions
-molecule = io_monte.reading_from_file('Data/ethane.txyz')
-conditions = res.Conditions(temperature=100,
-                            number_of_cycles=300,
+molecule = io_monte.reading_from_txyz_file('Data/ethane.txyz')
+conditions = res.Conditions(temperature=10,
+                            number_of_cycles=1000,
                             initial_expansion_factor=30,
-                            number_of_modes_to_use=5,
+                    #        number_of_modes_to_use=100,
                             acceptation_regulator=0.1,
                             number_of_values_for_average=100,
 )
@@ -18,7 +73,7 @@ conditions = res.Conditions(temperature=100,
 simulation = res.MonteCarlo(molecule)
 
 #continue routine
-if True:
+if False:
     print('Recovering...')
     conditions, simulation = io_monte.load_from_dump()
     conditions.number_of_cycles = 3000
@@ -32,9 +87,8 @@ energy = calculate.get_energy_from_tinker(molecule)
 print 'Initial Energy:', energy
 
 
-
 #Perform Monte Carlo simulation
-result = monte.calculate_MonteCarlo(simulation, conditions)
+result = monte.calculate_MonteCarlo_mode(simulation, conditions)
 
 #Show result plot
 plt.plot(result.energy)

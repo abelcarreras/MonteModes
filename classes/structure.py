@@ -1,34 +1,186 @@
 __author__ = 'abel'
-import Functions.calculate as calc
 import numpy as np
+import tempfile
+import os
+
+
+def int_to_xyz_old(molecule):
+    temp_file_name = tempfile.gettempdir() + '/structure_temp'+ '_' + str(os.getpid())
+
+    gaussian_input_file = open(temp_file_name + '.gzmat',mode='w')
+
+    gaussian_input_file.write('%NProcShared = 6\n#p M062X/LANL2DZ NOSYMM opt=Z-matrix NOFMM 5D 7F' + '\n\n')
+    gaussian_input_file.write('model [Hf(C6F5)6]2- prisma HF=-4414.3959893' + '\n\n')
+
+    gaussian_input_file.write('-2 1:\n')
+    for i in range(molecule.get_z_matrix().shape[0]):
+        line = str([list(molecule.get_atomic_elements_with_dummy()[i]) +
+                    list(molecule.get_z_matrix()[i])]).strip('[]').replace('[', '').replace(',', '').replace("'", "")
+        gaussian_input_file.write(line + '\n')
+
+    gaussian_input_file.write('Variables:\n')
+
+
+    for i in range(molecule.get_int_label().shape[0]):
+        line = str([list(molecule.get_int_label()[i]) +
+                    list(molecule.get_internal()[i])]).strip('[]').replace('[', '').replace(',', '').replace("'", "")
+        gaussian_input_file.write(line + '\n')
+
+    gaussian_input_file.write('\n')
+
+    gaussian_input_file.close()
+
+    os.system("babel -igzmat " + temp_file_name + ".gzmat -oxyz " + temp_file_name + ".xyz 2> /dev/null" )
+    xyz_file = open(temp_file_name + ".xyz", 'r')
+    lines = xyz_file.readlines()
+    number_of_atoms = int(lines[0])
+  #  print(number_of_atoms, temp_file_name)
+    coordinates = []
+    for i in range(number_of_atoms):
+        coordinates.append(lines[i+2].split()[1:4])
+
+    xyz_file.close()
+
+    return np.array(coordinates, dtype=float)
+
+def int_to_xyz(molecule, no_dummy=True):
+
+    internal = molecule.get_full_z_matrix()
+    coordinates = [[0.0, 0.0, 0.0]]
+
+    for line in internal[1:]:
+
+        bi = int(line[0])  #bond index
+        B = line[1]        #bond value
+        ai = int(line[2])  #Angle index
+        A = line[3]        #Angle value
+        ci = int(line[4])  #Dihedral index
+        C = line[5]        #Dihedral value
+
+        bond = np.array(coordinates[ai-1]) - np.array(coordinates[bi-1])
+        if np.linalg.norm(bond) == 0:
+            bond = np.array([1, 0, 0])
+
+        bond2 = np.array(coordinates[ci-1]) - np.array(coordinates[ai-1])
+        if np.linalg.norm(bond2) == 0:
+            bond2 = np.array([0, 1, 0])
+
+        origin = bond/np.linalg.norm(bond)*B
+        ref2 = bond
+        ref3 = np.cross(bond, bond2)
+
+        inter = np.dot(rotation_matrix(ref3, np.deg2rad(A)), origin)
+        final = np.dot(rotation_matrix(ref2, np.deg2rad(C)), inter)
+
+        final = final + np.array(coordinates[bi-1])
+        coordinates.append(final)
+
+    coordinates = np.array(coordinates)
+
+    if no_dummy:
+      #  mask = np.argwhere(molecule.get_atomic_elements_with_dummy()[:,0]  == 'X')
+        mask = np.argwhere((molecule.get_atomic_elements_with_dummy()[:,0] == 'X') |
+                           (molecule.get_atomic_elements_with_dummy()[:,0] == 'x')).flatten()
+        coordinates = np.delete(coordinates,mask,axis=0)
+
+    return np.array(coordinates, dtype=float)
+
+
 
 class Structure:
 
     def __init__(self,
                  coordinates=None,
+                 internal=None,
+                 z_matrix=None,
+                 int_label=None,
                  atom_types=None,
                  atomic_elements=None,
                  atomic_numbers=None,
                  connectivity=None,
-                 file_name=None):
+                 file_name=None,
+
+                 #Buscar un lloc millor
+                 int_weights=None):
 
         self._coordinates = coordinates
+        self._internal = internal
+        self._z_matrix = z_matrix
+        self._int_label = int_label
         self._atom_types = atom_types
         self._atomic_numbers = atomic_numbers
         self._connectivity = connectivity
         self._atomic_elements = atomic_elements
+        self._file_name = file_name
+        self._int_weights = int_weights
+
         self._atomic_masses = None
         self._number_of_atoms = None
+        self._number_of_internal = None
         self._energy = None
-        self._file_name = file_name
+
+        self._full_z_matrix = None
 
     def get_coordinates(self):
+        if self._coordinates is None:
+            self._coordinates = int_to_xyz(self)
         return self._coordinates.copy()
 
     def set_coordinates(self, coordinates):
         self._coordinates = coordinates
         self._number_of_atoms = None
         self._energy = None
+
+    def get_internal(self):
+        return self._internal.copy()
+
+    def set_internal(self, internal):
+        self._internal = internal
+        self._energy = None
+  #      self._coordinates = int_to_xyz(self)
+
+    def get_full_z_matrix(self):
+        if self._full_z_matrix is None:
+            num_z_atoms = self.get_z_matrix().shape[0]
+            self._full_z_matrix = np.zeros((num_z_atoms,6))
+
+            for row, i in enumerate(self.get_z_matrix()[1:]):
+                    for col, k in enumerate(i[0]):
+                        try:
+                            self._full_z_matrix[row+1, col] = float(k)
+                        except ValueError:
+                            self._full_z_matrix[row+1, col] = self.get_int_dict()[k]
+
+
+        return self._full_z_matrix
+
+    def get_z_matrix(self):
+        return self._z_matrix
+
+    def set_z_matrix(self, z_matrix):
+        self._z_matrix = z_matrix
+
+    def get_int_label(self):
+        return self._int_label
+
+    def set_int_label(self, int_label):
+        self._int_label = int_label
+
+    def get_int_dict(self):
+        self._internal_dict = {}
+        for i, label in enumerate(self.get_int_label()[:,0]):
+            self._internal_dict.update({label:self.get_internal()[i, 0]})
+        return self._internal_dict
+
+    def get_int_weights(self):
+        return self._int_weights
+
+    def set_int_weights(self, int_weights):
+        self._int_weights = int_weights
+
+    def get_atomic_elements_with_dummy(self):
+       # print([i for i in self._atomic_elements if i != "X"])
+       return self._atomic_elements
 
     @property
     def file_name(self):
@@ -51,7 +203,8 @@ class Structure:
         self._atomic_numbers = atomic_numbers
 
     def get_atomic_elements(self):
-        return self._atomic_elements
+        return np.array([i for i in self._atomic_elements if i != "X"], dtype=str)
+   #     return self._atomic_elements
 
     def set_atomic_elements(self, atomic_elements):
         self._atomic_elements = atomic_elements
@@ -65,14 +218,20 @@ class Structure:
 #   Real methods
 
     def get_number_of_atoms(self):
-        if self._number_of_atoms is None and self._coordinates is not None:
-            self._number_of_atoms = self._coordinates.shape[0]
+        if self._number_of_atoms is None:
+            self._number_of_atoms = self.get_coordinates().shape[0]
 
         return self._number_of_atoms
 
-    def get_energy(self):
+    def get_number_of_internal(self):
+        if self._number_of_internal is None:
+            self._number_of_internal = self.get_internal().shape[0]
+
+        return self._number_of_internal
+
+    def get_energy(self, method=None):
         if not self._energy:
-            self._energy = calc.get_energy_from_tinker(self)
+            self._energy = method.function(self)
         return self._energy
 
     def get_atomic_masses(self):
@@ -203,3 +362,38 @@ atom_data = [
     [117, "Uus", "Ununseptium", 0], # 117
     [118, "Uuo", "Ununoctium", 0], # 118
     ]
+
+def rotation_matrix(axis, theta):
+    """
+    Return the rotation matrix associated with counterclockwise rotation about
+    the given axis by theta radians.
+    """
+    axis = np.asarray(axis)
+    theta = np.asarray(theta)
+    axis = axis/np.sqrt(np.dot(axis, axis))
+    a = np.cos(theta/2)
+    b, c, d = -axis*np.sin(theta/2)
+    aa, bb, cc, dd = a*a, b*b, c*c, d*d
+    bc, ad, ac, ab, bd, cd = b*c, a*d, a*c, a*b, b*d, c*d
+    return np.array([[aa+bb-cc-dd, 2*(bc+ad), 2*(bd-ac)],
+                     [2*(bc-ad), aa+cc-bb-dd, 2*(cd+ab)],
+                     [2*(bd+ac), 2*(cd-ab), aa+dd-bb-cc]])
+
+
+
+if __name__ == '__main__':
+    import Functions.methods as meth
+    import Functions.reading as io_monte
+    import Functions.calculate as calc
+
+    tinker_mm3 = meth.tinker(parameter_set='mm3')
+
+    gaussian_pm3 = meth.gaussian()
+    molecule = io_monte.reading_from_xyz_file('../test.xyz')
+
+    print(gaussian_pm3.function(molecule))
+
+
+
+   # print(molecule.get_full_z_matrix())
+    print(len(int_to_xyz(molecule)))
