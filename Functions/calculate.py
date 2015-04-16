@@ -4,6 +4,7 @@ import subprocess
 import classes.results as res
 import os, glob
 from subprocess import Popen, PIPE
+from tempfile import NamedTemporaryFile
 
 force_filed = 'mm3.prm'
 
@@ -96,7 +97,7 @@ def get_energy_from_gaussian(molecule, calculation='pm6', internal=False):
 
     conversion = 627.503 # hartree to kcal/mol
 
-    gaussian_process = Popen('g09', stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=True)
+    gaussian_process = Popen('g09', stdout=PIPE, stderr=PIPE, shell=True)
     (output, err) = gaussian_process.communicate(input=input_data)
     gaussian_process.wait()
 
@@ -160,10 +161,49 @@ def get_modes_from_tinker(molecule, conditions):
 
     return total_modes
 
+def create_symop_file(molecule, symmetry, label, connect, central_atom):
+
+    temp_file_name = '../symmetry'+ '_' + str(os.getpid()) + '.zdat'
+
+    symop_input_file = open(temp_file_name, 'w')
+    if label:
+        symop_input_file.write('%label')
+    if connect:
+        symop_input_file.write('%connect')
+    symop_input_file.write(str(molecule.get_number_of_atoms()) + ' ' + str(central_atom) + '\n' + symmetry + '\nA\n')
+    for i in range(molecule.get_number_of_atoms()):
+        line = str(list(molecule.get_atomic_elements()[i]) +
+                   list(molecule.get_coordinates()[i])
+        ).strip('[]').replace(',', '').replace("'", "")
+        symop_input_file.write(line + '\n\n')
+
+    return symop_input_file
+
+
+def get_symmetry(molecule, symmetry='c 5', label=False, connect=False, central_atom=0):
+
+    symop_input_file = create_symop_file(molecule, symmetry, label, connect, central_atom)
+    symop_input_file.close()
+
+    symop_process = Popen(['../External/symop', symop_input_file.name], stdout=PIPE)
+    symop_process.wait()
+
+    measure = float(open(symop_input_file.name[:-4]+'ztab','r').readlines()[-1].split()[-1])
+
+    os.remove(symop_input_file.name)
+    os.remove(symop_input_file.name[:-4]+'ztab')
+    os.remove(symop_input_file.name[:-4]+'zout')
+
+    return measure
+
+
 if __name__ == '__main__':
 
     import Functions.reading as io_monte
 
-    molecule = io_monte.reading_from_gzmat_file('../test.gzmat')
+   # molecule = io_monte.reading_from_gzmat_file('../test.gzmat')
+    molecule = io_monte.reading_from_xyz_file('../test.xyz')
+    print(get_symmetry(molecule,symmetry='s'))
+
     print(create_gaussian_input(molecule,internal=False))
     print(get_energy_from_gaussian(molecule,calculation='pm6'))

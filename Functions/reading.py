@@ -114,7 +114,6 @@ def reading_from_gzmat_file(file_name):
 
 
 
-
 def write_molecule_to_xyz(molecule, xyz_file):
     xyz_file.write('{0}\n\n'.format(molecule.get_number_of_atoms()))
     for i in range(molecule.get_number_of_atoms()):
