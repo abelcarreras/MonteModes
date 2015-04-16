@@ -9,7 +9,7 @@ force_filed = 'mm3.prm'
 
 
 def create_tinker_input(molecule):
-#    temp_file_name = tempfile.gettempdir() + '_' + str(os.getpid())
+
     temp_file_name = tempfile.gettempdir() + '/tinker_temp'+ '_' + str(os.getpid())
     tinker_input_file = open(temp_file_name,mode='w')
 
@@ -28,48 +28,37 @@ def create_tinker_input(molecule):
     return tinker_input_file
 
 
-def create_gaussian_internal_input(molecule):
+def create_gaussian_input(molecule, calculation='pm6', internal=False):
 
-    temp_file_name = tempfile.gettempdir() + '/gaussian_temp'+ '_' + str(os.getpid())
-#    temp_file_name = 'test_gauss'
-    gaussian_input_file = open(temp_file_name,mode='w')
-#    gaussian_input_file.write('#p M062X/LANL2DZ NOSYMM opt=Z-matrix NOFMM 5D 7F' + '\n\n')
-    gaussian_input_file.write('#p pm6' + '\n\n')
-
-    gaussian_input_file.write('model [Hf(C6F5)6]2- prisma HF=-4414.3959893' + '\n\n')
-
-    gaussian_input_file.write('-2 1\n')
-
-    for i in range(len(molecule.get_atomic_elements_with_dummy())):
-        line = str([list(molecule.get_atomic_elements_with_dummy()[i]) +
-                    list(molecule.get_z_matrix()[i])]).strip('[]').replace('[', '').replace(',', '').replace("'", "")
-        gaussian_input_file.write(line + '\n')
-
-    gaussian_input_file.write('Variables:\n')
-
-
-    for i in range(molecule.get_int_label().shape[0]):
-        line = str([list(molecule.get_int_label()[i]) +
-                    list(molecule.get_internal()[i])]).strip('[]').replace('[', '').replace(',', '').replace("'", "")
-        gaussian_input_file.write(line + '\n')
-
-    gaussian_input_file.write('\n')
-
-    gaussian_input_file.close()
-
-    return gaussian_input_file
-
-def create_gaussian_input(molecule, calculation='pm6', charge=0, multiplicity=1):
-
-    atomic_elements = molecule.get_atomic_elements()[:, 0]
-    coordinates = molecule.get_coordinates()
+    multiplicity = molecule.multiplicity
+    charge = molecule.charge
 
     input_file = "# "+calculation+"\n\nPython Input\n\n"+str(charge)+" "+str(multiplicity)+"\n"
-    for index, element in enumerate(atomic_elements):
-        input_file += (element + "\t" +
-                       str(coordinates[index][0]) + "\t" +
-                       str(coordinates[index][1]) + "\t" +
-                       str(coordinates[index][2]) + "\n")
+
+ #Zmatrix
+    if internal:
+        atomic_elements = molecule.get_atomic_elements_with_dummy()[:, 0]
+        z_matrix = molecule.get_z_matrix()
+        input_file += atomic_elements[0] + '\n'
+        for index, element in enumerate(atomic_elements[1:]):
+            input_file += (element + '\t' +
+                           '\t'.join(z_matrix[index+1][0]) + '\n')
+
+        internal_labels = molecule.get_int_label()
+        input_file += 'Variables:\n'
+        for label in internal_labels:
+            input_file += (label[0] + '\t' +
+                           str(molecule.get_int_dict()[label[0]])+'\n')
+  #Cartessian
+    else:
+        atomic_elements = molecule.get_atomic_elements()[:, 0]
+        coordinates = molecule.get_coordinates()
+
+        for index, element in enumerate(atomic_elements):
+            input_file += (element + "\t" +
+                           str(coordinates[index][0]) + "\t" +
+                           str(coordinates[index][1]) + "\t" +
+                           str(coordinates[index][2]) + "\n")
 
     return input_file + "\n"
 
@@ -98,12 +87,12 @@ def get_energy_from_tinker(molecule):
     return energy
 
 
-
-
-def get_energy_from_gaussian(molecule, calculation='pm6'):
+def get_energy_from_gaussian(molecule, calculation='pm6', internal=False):
 
     input_data = create_gaussian_input(molecule,
-                                       calculation=calculation)
+                                       calculation=calculation,
+                                       internal=internal)
+
 
     conversion = 627.503 # hartree to kcal/mol
 
@@ -111,7 +100,6 @@ def get_energy_from_gaussian(molecule, calculation='pm6'):
     (output, err) = gaussian_process.communicate(input=input_data)
     gaussian_process.wait()
 
-   # print(output)
     try:
         energy = float(output[output.find('E('):].split()[2])
     except IndexError or ValueError:
@@ -119,29 +107,6 @@ def get_energy_from_gaussian(molecule, calculation='pm6'):
         print('\n'.join(output.splitlines()[-10:]))
         energy = 1E20
     return energy * conversion
-
-
-def get_energy_from_gaussian_2(molecule):
-    conversion = 627.503 # hartree to kcal/mol
-    gaussian_input_file = create_gaussian_internal_input(molecule)
-
-    gaussian_command = './g09 < ' + gaussian_input_file.name
-
-    tinker_process = subprocess.Popen(gaussian_command, stdout=subprocess.PIPE, shell=True)
-    (output, err) = tinker_process.communicate()
-    tinker_process.wait()
-
-    os.unlink(gaussian_input_file.name)
-
-    try:
-        energy = float(output[output.find('E('):].split()[2])
-    except IndexError or ValueError:
-        print('Failed trying to get energy from gaussian output')
-        energy = 1E20
-
-    return energy * conversion
-
-
 
 
 def get_modes_from_tinker(molecule, conditions):
@@ -200,5 +165,5 @@ if __name__ == '__main__':
     import Functions.reading as io_monte
 
     molecule = io_monte.reading_from_gzmat_file('../test.gzmat')
-
+    print(create_gaussian_input(molecule,internal=False))
     print(get_energy_from_gaussian(molecule,calculation='pm6'))

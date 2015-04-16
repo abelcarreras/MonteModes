@@ -9,15 +9,29 @@ method_function = {
 class gaussian:
 
     def __init__(self,
-                 methodology='pm3'):
-
+                 methodology='pm3',
+                 internal=False,
+                 memory=None,
+                 processors=None):
 
         self._methodology = methodology
+        self._memory = memory
+        self._processors = processors
+        self._internal=internal
 
 
-    def function(self, molecule):
-        return calc.get_energy_from_gaussian(molecule, self._methodology)
+    def single_point(self, molecule):
+        return calc.get_energy_from_gaussian(molecule,
+                                             calculation=self._methodology,
+                                             internal=self._internal)
 
+    @property
+    def internal(self):
+        return self._internal
+
+    @internal.setter
+    def internal(self, internal):
+        self._internal = internal
 
 
 class tinker:
@@ -28,7 +42,7 @@ class tinker:
         self._parameter_set = parameter_set
 
 
-    def function(self, molecule):
+    def single_point(self, molecule):
 
         return calc.get_energy_from_tinker(molecule)
 

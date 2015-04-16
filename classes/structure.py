@@ -99,6 +99,8 @@ class Structure:
                  atomic_numbers=None,
                  connectivity=None,
                  file_name=None,
+                 charge=0,
+                 multiplicity=1,
 
                  #Buscar un lloc millor
                  int_weights=None):
@@ -111,6 +113,9 @@ class Structure:
         self._atomic_numbers = atomic_numbers
         self._connectivity = connectivity
         self._atomic_elements = atomic_elements
+        self._charge = charge
+        self._multiplicity = multiplicity
+
         self._file_name = file_name
         self._int_weights = int_weights
 
@@ -190,6 +195,22 @@ class Structure:
     def file_name(self, file_name):
         self._file_name = file_name
 
+    @property
+    def charge(self):
+        return self._charge
+
+    @charge.setter
+    def charge(self, charge):
+        self._charge = charge
+
+    @property
+    def multiplicity(self):
+        return self._multiplicity
+
+    @multiplicity.setter
+    def multiplicity(self, multiplicity):
+        self._multiplicity = multiplicity
+
     def get_atom_types(self):
         return self._atom_types
 
@@ -231,7 +252,7 @@ class Structure:
 
     def get_energy(self, method=None):
         if not self._energy:
-            self._energy = method.function(self)
+            self._energy = method.single_point(self)
         return self._energy
 
     def get_atomic_masses(self):
