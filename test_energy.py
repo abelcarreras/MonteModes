@@ -2,7 +2,7 @@ __author__ = 'abel'
 
 import matplotlib.pyplot as plt
 
-import montemodes.Functions.reading as io_monte
+import montemodes.functions.reading as io_monte
 
 import Functions.calculate as calculate
 

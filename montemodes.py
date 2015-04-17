@@ -1,14 +1,16 @@
 import matplotlib.pyplot as plt
 
-import montemodes.Functions.reading as io_monte
-import montemodes.Functions.calculate as calculate
-import montemodes.Functions.montecarlo as monte
-import montemodes.Functions.methods as meth
+import montemodes.functions.reading as io_monte
+import montemodes.functions.calculate as calculate
+import montemodes.functions.montecarlo as monte
+import montemodes.functions.methods as meth
 import montemodes.classes.results  as res
 
 
-gaussian_pm3 = meth.gaussian(methodology='pm6',
-                             internal=False,)
+gaussian_pm3 = meth.gaussian(methodology='am1',
+                             internal=False)
+tinker_mm3 = meth.tinker(parameter_set='mm3.prm')
+
 
 conditions = res.Conditions(temperature=500,
                             number_of_cycles=50,
