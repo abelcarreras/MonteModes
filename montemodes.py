@@ -1,13 +1,14 @@
-import Functions.reading as io_monte
-import Functions.calculate as calculate
-import Functions.montecarlo as monte
-import classes.results as res
 import matplotlib.pyplot as plt
-import Functions.methods as meth
+
+import montemodes.Functions.reading as io_monte
+import montemodes.Functions.calculate as calculate
+import montemodes.Functions.montecarlo as monte
+import montemodes.Functions.methods as meth
+import montemodes.classes.results  as res
 
 
 gaussian_pm3 = meth.gaussian(methodology='pm6',
-                             internal=True,)
+                             internal=False,)
 
 conditions = res.Conditions(temperature=500,
                             number_of_cycles=50,
@@ -16,16 +17,16 @@ conditions = res.Conditions(temperature=500,
                             number_of_values_for_average=50,
                             energy_method=gaussian_pm3)
 
-#molecule = io_monte.reading_from_xyz_file('test.xyz')
+molecule = io_monte.reading_from_xyz_file('test.xyz')
 #molecule = io_monte.reading_from_txyz_file('Data/ethane.txyz')
-molecule = io_monte.reading_from_gzmat_file('test.gzmat')
-
+#molecule = io_monte.reading_from_gzmat_file('test.gzmat')
+molecule.charge = 0
+molecule.multiplicity = 1
 
 simulation = res.MonteCarlo(molecule)
-result = monte.calculate_MonteCarlo_internal(simulation, conditions)
+#result = monte.calculate_MonteCarlo_internal(simulation, conditions, show_text=True)
 
-
-#result = monte.calculate_MonteCarlo_cartesian(simulation, conditions)
+result = monte.calculate_MonteCarlo_cartesian(simulation, conditions)
 
 #Show result plot
 plt.plot(result.energy)

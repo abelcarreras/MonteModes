@@ -1,11 +1,12 @@
 __author__ = 'abel'
 
-import Functions.reading as io_monte
-import Functions.calculate as calculate
-import Functions.montecarlo as monte
-import classes.results as res
 import matplotlib.pyplot as plt
-import math
+
+import montemodes.Functions.reading as io_monte
+
+import Functions.calculate as calculate
+
+
 
 #Define initial conditions
 import copy
