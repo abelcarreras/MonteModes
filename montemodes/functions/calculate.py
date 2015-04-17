@@ -30,12 +30,15 @@ def create_tinker_input(molecule):
     return tinker_input_file
 
 
-def create_gaussian_input(molecule, calculation='pm6', internal=False):
+def create_gaussian_input(molecule, calculation='pm6', internal=False, type='energy'):
+
+    dict = {'energy' : ' ', 'vibration' : ' freq '}
+
 
     multiplicity = molecule.multiplicity
     charge = molecule.charge
 
-    input_file = "# "+calculation+"\n\nPython Input\n\n"+str(charge)+" "+str(multiplicity)+"\n"
+    input_file = '#'+dict[type]+calculation+'\n\nPython Input\n\n'+str(charge)+' '+str(multiplicity)+'\n'
 
  #Zmatrix
     if internal:
@@ -110,20 +113,63 @@ def get_energy_from_gaussian(molecule, calculation='pm6', internal=False):
         energy = 1E20
     return energy * conversion
 
+def get_modes_from_gaussian(molecule, calculation='pm6', internal=False):
 
-def get_modes_from_tinker(molecule, conditions):
+    input_data = create_gaussian_input(molecule,
+                                   calculation=calculation,
+                                   internal=internal,
+                                   type='vibration')
 
-    force_field = 'mm3.prm'
+    conversion = 627.503 # hartree to kcal/mol
+    gaussian_process = Popen('g09', stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=True)
+    (output, err) = gaussian_process.communicate(input=input_data)
+    gaussian_process.wait()
 
-    if conditions.number_of_modes_to_use is None:
+    lines = output[output.find('Frequencies'):].split()
+
+    # Frequencies
+    indexes = [i for i, x in enumerate(lines) if x == 'Frequencies']
+    frequencies = np.array([[lines[i+2], lines[i+3], lines[i+4]] for i in indexes],dtype=float).flatten()
+
+
+    # Modes
+    num_atoms = molecule.get_number_of_atoms()
+    num_modes = 3 * num_atoms
+
+    modes = []
+    for block in range(num_modes/3-2):
+        indexes = [i for i, x in enumerate(lines) if x == 'Atom']
+        freq_i = np.array([lines[indexes[block]+11+i*11:indexes[block]+11+(i+1)*11] for i in range(num_atoms)],dtype=float)[:,2:]
+
+        for i in range(0, 9, 3):
+            modes.append(freq_i[:,i:i+3].tolist())
+
+    #Energia
+    try:
+        energy = float(output[output.find('E('):].split()[2])
+    except IndexError or ValueError:
+        print('Failed trying to get energy from gaussian output')
+        print('\n'.join(output.splitlines()[-10:]))
+        energy = 1E20
+
+    total_modes = res.Vibration(frequencies=np.array(frequencies),
+                                modes=np.array(modes))
+
+    return total_modes, energy * conversion
+
+
+def get_modes_from_tinker(molecule, force_field='mm3.prm', num_modes=None):
+
+
+    if num_modes is None:
         tinker_list = ' A'
-        conditions.number_of_modes_to_use = 3 * molecule.get_number_of_atoms()
+        num_modes = 3 * molecule.get_number_of_atoms()
     else:
-        if conditions.number_of_modes_to_use >= (3 * molecule.get_number_of_atoms()):
+        if num_modes >= (3 * molecule.get_number_of_atoms()):
             tinker_list = ' A'
-            conditions.number_of_modes_to_use = 3 * molecule.get_number_of_atoms()
+            num_modes = 3 * molecule.get_number_of_atoms()
         else:
-            tinker_list = ' ' + ' '.join(map(str, range(1,conditions.number_of_modes_to_use+1)))
+            tinker_list = ' ' + ' '.join(map(str, range(1,num_modes+1)))
 
     tinker_input_file = create_tinker_input(molecule)
     tinker_command = 'External/vibrate ' + tinker_input_file.name + ' Data/' + force_field + tinker_list
@@ -139,10 +185,10 @@ def get_modes_from_tinker(molecule, conditions):
     frequencies = []
     pos = lines.index('Vibrational')
 
-    if conditions.number_of_modes_to_use is None:
+    if num_modes is None:
         number_of_modes = molecule.get_number_of_atoms() * 3
     else:
-        number_of_modes = conditions.number_of_modes_to_use
+        number_of_modes = num_modes
 
     for f in range(number_of_modes):
         pos = lines.index('Vibrational', pos + 1)
@@ -207,7 +253,6 @@ if __name__ == '__main__':
    # molecule = io_monte.reading_from_gzmat_file('../test.gzmat')
     molecule = io_monte.reading_from_xyz_file('../test.xyz')
     print(get_energy_from_gaussian(molecule, calculation='am1'))
-
    # print(get_symmetry(molecule,symmetry='s'))
 
    # print(create_gaussian_input(molecule,internal=False))

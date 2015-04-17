@@ -124,6 +124,7 @@ class Structure:
         self._number_of_atoms = None
         self._number_of_internal = None
         self._energy = None
+        self._modes = None
 
         self._full_z_matrix = None
 
@@ -267,9 +268,16 @@ class Structure:
         return self._number_of_internal
 
     def get_energy(self, method=None):
-        if not self._energy:
+        if self._energy is None:
             self._energy = method.single_point(self)
         return self._energy
+
+
+    def get_modes(self, method=None):
+        if self._modes is None:
+            self._modes, self._energy = method.vibrations(self)
+        return self._modes
+
 
     def get_atomic_masses(self):
         if self._atomic_masses is None:

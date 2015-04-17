@@ -1,7 +1,6 @@
 from montemodes import classes as res
 
 __author__ = 'abel'
-import montemodes.functions.calculate as calculate
 import math
 import random
 import copy
@@ -22,7 +21,7 @@ def weighted_choice(weights):
 def alteration_with_modes(molecule, vibration, conditions):
     altered_coordinates = molecule.get_coordinates()
     random_number = random.uniform(0, 1)
-    chosen = random.randrange(vibration.number_of_modes)
+    chosen = random.randrange(conditions.number_of_modes_to_use)
 
     if abs(vibration.frequencies[chosen]) > 0.01:
         altered_coordinates += ( np.sqrt(conditions.expansion_factor*random_number*molecule.get_atomic_masses())
@@ -95,7 +94,8 @@ def adjust_expansion_factor(acceptation_vector, conditions):
 def calculate_MonteCarlo_mode(simulation, conditions, show_text=True):
 
     molecule = copy.deepcopy(simulation.trajectory[-1])
-    vibration = calculate.get_modes_from_tinker(molecule,conditions)
+  #  vibration = calculate.get_modes_from_tinker(molecule,conditions)
+    vibration = molecule.get_modes(conditions.energy_method)
 
     print 'Temperature', conditions.temperature
     print('Starting at:',simulation.number_of_cycles)
@@ -119,7 +119,8 @@ def calculate_MonteCarlo_mode(simulation, conditions, show_text=True):
 
         molecule = molecule_altered
         simulation.add_accepted(iteration,conditions)
-        vibration = calculate.get_modes_from_tinker(molecule, conditions)
+     #   vibration = calculate.get_modes_from_tinker(molecule, conditions)
+        vibration = molecule.get_modes(conditions.energy_method)
 
     simulation.number_of_cycles += conditions.number_of_cycles
     return simulation

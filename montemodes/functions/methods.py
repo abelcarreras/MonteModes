@@ -25,6 +25,12 @@ class gaussian:
                                              calculation=self._methodology,
                                              internal=self._internal)
 
+    def vibrations(self, molecule):
+        modes, energy = calc.get_modes_from_gaussian(molecule,
+                                                     calculation=self._methodology)
+        return modes, energy
+
+
     @property
     def internal(self):
         return self._internal
@@ -37,12 +43,19 @@ class gaussian:
 class tinker:
 
     def __init__(self,
-                 parameter_set='mm3.prm'):
+                 parameter_set='mm3.prm',
+                 num_modes=None):
 
         self._parameter_set = parameter_set
+        self._num_modes = num_modes
 
 
     def single_point(self, molecule):
-
         return calc.get_energy_from_tinker(molecule, force_field=self._parameter_set)
 
+    def vibrations(self, molecule):
+        modes =  calc.get_modes_from_tinker(molecule,
+                                            force_field=self._parameter_set,
+                                            num_modes=self._num_modes)
+        energy = None
+        return modes, energy

@@ -12,23 +12,27 @@ gaussian_pm3 = meth.gaussian(methodology='am1',
 tinker_mm3 = meth.tinker(parameter_set='mm3.prm')
 
 
-conditions = res.Conditions(temperature=500,
-                            number_of_cycles=50,
+conditions = res.Conditions(temperature=100,
+                            number_of_cycles=1000,
                             initial_expansion_factor=0.05,
                             acceptation_regulator=0.1,
-                            number_of_values_for_average=50,
+                            number_of_modes_to_use=4,
+                            number_of_values_for_average=80,
                             energy_method=gaussian_pm3)
 
-molecule = io_monte.reading_from_xyz_file('test.xyz')
-#molecule = io_monte.reading_from_txyz_file('Data/ethane.txyz')
+#molecule = io_monte.reading_from_xyz_file('test.xyz')
+molecule = io_monte.reading_from_txyz_file('Data/ethane.txyz')
 #molecule = io_monte.reading_from_gzmat_file('test.gzmat')
 molecule.charge = 0
 molecule.multiplicity = 1
 
 simulation = res.MonteCarlo(molecule)
+
 #result = monte.calculate_MonteCarlo_internal(simulation, conditions, show_text=True)
 
-result = monte.calculate_MonteCarlo_cartesian(simulation, conditions)
+#result = monte.calculate_MonteCarlo_cartesian(simulation, conditions)
+
+result = monte.calculate_MonteCarlo_mode(simulation, conditions)
 
 #Show result plot
 plt.plot(result.energy)
