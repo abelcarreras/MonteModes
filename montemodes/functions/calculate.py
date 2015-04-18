@@ -75,7 +75,7 @@ def get_energy_from_tinker(molecule, force_field = 'mm3.prm'):
         key_file_name = ''
 
     tinker_command = 'analyze ' + tinker_input_file.name + \
-                     ' Data/' + force_field + ' E -k ' + key_file_name
+                     ' ' + force_field + ' E -k ' + key_file_name
 
 
     tinker_process = subprocess.Popen(tinker_command, stdin=PIPE, stderr=PIPE, stdout=PIPE, shell=True)
@@ -172,7 +172,7 @@ def get_modes_from_tinker(molecule, force_field='mm3.prm', num_modes=None):
             tinker_list = ' ' + ' '.join(map(str, range(1,num_modes+1)))
 
     tinker_input_file = create_tinker_input(molecule)
-    tinker_command = 'External/vibrate ' + tinker_input_file.name + ' Data/' + force_field + tinker_list
+    tinker_command = 'vibrate ' + tinker_input_file.name + ' ' + force_field + tinker_list
 
     tinker_process = subprocess.Popen(tinker_command, stdout=subprocess.PIPE, shell=True)
     (output, err) = tinker_process.communicate()
