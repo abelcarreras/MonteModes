@@ -9,6 +9,8 @@ setup(name='montemodes',
       packages=['montemodes',
                 'montemodes.classes',
                 'montemodes.functions'],
-      scripts=['scripts/montemodes'])
+      scripts=['scripts/montemodes'],
+      data_files=[('binaries', ['External/*'])]
+)
 
 exit()
