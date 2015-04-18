@@ -79,6 +79,8 @@ def get_symmetry_trajectory(trajectory, input_data):
 
     return symmetry_list
 
+
+
 if __name__ == '__main__':
 
     import montemodes.functions.reading as io_monte

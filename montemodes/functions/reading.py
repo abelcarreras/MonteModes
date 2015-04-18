@@ -155,6 +155,13 @@ def write_result_to_file(result, file_name):
 
     return 0
 
+def write_list_to_file(list, file_name):
+    list_file = open(file_name, 'w')
+    for i, value in enumerate(list):
+        list_file.write("{0} {1}\n".format(i,value))
+
+    list_file.close()
+
 
 def save_to_dump(conditions, result,filename='continue.obj'):
     dump_file = open(filename, 'w')

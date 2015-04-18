@@ -46,6 +46,7 @@ symop_c3 = symop.Symop(symmetry='s',
                        central_atom=0)
 
 symmetry_list = symop.get_symmetry_trajectory(result.trajectory, symop_c3)
+io_monte.write_list_to_file(symmetry_list,'symmetry.txt')
 
 print(symmetry_list)
 plt.plot(symmetry_list)
