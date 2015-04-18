@@ -36,7 +36,7 @@ io_monte.write_result_to_file(result, 'test.out')
 io_monte.write_result_trajectory(result.trajectory, 'trajectory.xyz')
 
 #Symmetry analysis
-symop_c3 = symop.Symop(symmetry='s',
+symop_c3 = symop.Symop(symmetry='c 4',
                        label=False,
                        connect=False,
                        central_atom=0)
