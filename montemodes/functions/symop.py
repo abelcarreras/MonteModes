@@ -39,7 +39,7 @@ def create_symop_file(molecule, input_data):
     central_atom = input_data.central_atom
     symmetry = input_data.symmetry
 
-    temp_file_name = '../symmetry'+ '_' + str(os.getpid()) + '.zdat'
+    temp_file_name = 'symmetry'+ '_' + str(os.getpid()) + '.zdat'
 
     symop_input_file = open(temp_file_name, 'w')
     if label:
