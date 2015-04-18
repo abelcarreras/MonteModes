@@ -18,10 +18,17 @@ def weighted_choice(weights):
 
 ########### ALTERATION FUNCTIONS ########
 
-def alteration_with_modes(molecule, vibration, conditions):
+def alteration_with_modes(molecule, conditions):
     altered_coordinates = molecule.get_coordinates()
     random_number = random.uniform(0, 1)
-    chosen = random.randrange(conditions.number_of_modes_to_use)
+
+    vibration = molecule.get_modes(conditions.energy_method)
+
+    chosen = random.randrange(len(vibration.frequencies))
+
+    if conditions.number_of_modes_to_use is not None:
+        if conditions.number_of_modes_to_use < len(vibration.frequencies):
+            chosen = random.randrange(conditions.number_of_modes_to_use)
 
     if abs(vibration.frequencies[chosen]) > 0.01:
         altered_coordinates += ( np.sqrt(conditions.expansion_factor*random_number*molecule.get_atomic_masses())
@@ -50,11 +57,9 @@ def alteration_internal_with_weights(molecule, conditions):
 
 def alteration_cartesian(molecule, conditions):
     altered_coordinates = molecule.get_coordinates()
-   # print(np.prod([np.random.random(molecule.get_coordinates().shape)-0.5]))
-  #  exit()
+
     altered_coordinates += (np.random.random(molecule.get_coordinates().shape)-0.5) * conditions.expansion_factor
 
- #   print(altered_coordinates)
     altered_molecule = copy.deepcopy(molecule)
     altered_molecule.set_coordinates(altered_coordinates)
     return altered_molecule
@@ -63,7 +68,6 @@ def alteration_cartesian(molecule, conditions):
 ############ REGULATION FUNCTIONS #########
 
 def average_gradient(vector):
-#    print(np.polyfit( np.arange(len(vector)),vector,1,full=True)[1])
     poly_values = (np.polyfit( np.arange(len(vector)),vector,2))
     poly_derivative = np.polyder(np.poly1d(poly_values))
     return -poly_derivative(len(vector))
@@ -89,46 +93,15 @@ def adjust_expansion_factor(acceptation_vector, conditions):
     return conditions.expansion_factor * final
 
 
-#####MONTECARLO ALGORITHMS######
-
-def calculate_MonteCarlo_mode(simulation, conditions, show_text=True):
-
-    molecule = copy.deepcopy(simulation.trajectory[-1])
-  #  vibration = calculate.get_modes_from_tinker(molecule,conditions)
-    vibration = molecule.get_modes(conditions.energy_method)
-
-    print 'Temperature', conditions.temperature
-    print('Starting at:',simulation.number_of_cycles)
-    for iteration in range(simulation.number_of_cycles, simulation.number_of_cycles + conditions.number_of_cycles):
-
-        simulation.update_acceptation_vector(iteration,conditions)
-        simulation.append_data_from_molecule(molecule)
-        conditions.expansion_factor = adjust_expansion_factor(simulation.acceptation_ratio_vector, conditions)
-        molecule_altered = alteration_with_modes(molecule, vibration, conditions)
-
-        if show_text:
-            print('{0:12.5f} {1:12.5f}    {2:2.3f}'.format(molecule.get_energy(conditions.energy_method),
-                  molecule_altered.get_energy(conditions.energy_method),
-                  simulation.acceptation_ratio))
-
-        if molecule.get_energy(conditions.energy_method) < molecule_altered.get_energy(conditions.energy_method):
-            energy_ratio = math.exp((molecule.get_energy(conditions.energy_method) - molecule_altered.get_energy(conditions.energy_method))
-                                    / (conditions.temperature * conditions.kb))
-            if energy_ratio < random.random():
-                continue
-
-        molecule = molecule_altered
-        simulation.add_accepted(iteration,conditions)
-     #   vibration = calculate.get_modes_from_tinker(molecule, conditions)
-        vibration = molecule.get_modes(conditions.energy_method)
-
-    simulation.number_of_cycles += conditions.number_of_cycles
-    return simulation
+##########MONTECARLO ALGORITHM###########
 
 
 
+def calculate_MonteCarlo(simulation, conditions, show_text=True, alteration_type='cartesian'):
 
-def calculate_MonteCarlo_internal(simulation, conditions, show_text=True):
+    alteration = { 'cartesian' : alteration_cartesian,
+                   'internal'  : alteration_internal_with_weights,
+                   'modes'     : alteration_with_modes}
 
     molecule = copy.deepcopy(simulation.trajectory[-1])
 
@@ -140,7 +113,7 @@ def calculate_MonteCarlo_internal(simulation, conditions, show_text=True):
 
         simulation.append_data_from_molecule(molecule)
         conditions.expansion_factor = adjust_expansion_factor(simulation.acceptation_ratio_vector, conditions)
-        molecule_altered = alteration_internal_with_weights(molecule, conditions)
+        molecule_altered = alteration[alteration_type](molecule, conditions)
 
         if show_text:
             print('{0:12.5f} {1:12.5f}    {2:2.3f}'.format(molecule.get_energy(conditions.energy_method),
@@ -159,38 +132,6 @@ def calculate_MonteCarlo_internal(simulation, conditions, show_text=True):
     simulation.number_of_cycles += conditions.number_of_cycles
     return simulation
 
-
-
-def calculate_MonteCarlo_cartesian(simulation, conditions, show_text=True):
-
-    molecule = copy.deepcopy(simulation.trajectory[-1])
-
-    print 'Temperature', conditions.temperature
-    print('Starting at:',simulation.number_of_cycles)
-    for iteration in range(simulation.number_of_cycles, simulation.number_of_cycles + conditions.number_of_cycles):
-
-        simulation.update_acceptation_vector(iteration, conditions)
-
-        simulation.append_data_from_molecule(molecule)
-        conditions.expansion_factor = adjust_expansion_factor(simulation.acceptation_ratio_vector, conditions)
-        molecule_altered = alteration_cartesian(molecule, conditions)
-
-        if show_text:
-            print('{0:12.5f} {1:12.5f}    {2:2.3f}'.format(molecule.get_energy(conditions.energy_method),
-                  molecule_altered.get_energy(conditions.energy_method),
-                  simulation.acceptation_ratio))
-
-        if molecule.get_energy(conditions.energy_method) < molecule_altered.get_energy(conditions.energy_method):
-            energy_ratio = math.exp((molecule.get_energy(conditions.energy_method) - molecule_altered.get_energy(conditions.energy_method))
-                                    / (conditions.temperature * conditions.kb))
-            if energy_ratio < random.random():
-                continue
-
-        molecule = molecule_altered
-        simulation.add_accepted(iteration,conditions)
-
-    simulation.number_of_cycles += conditions.number_of_cycles
-    return simulation
 
 
 if __name__ == '__main__':

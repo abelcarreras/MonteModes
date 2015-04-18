@@ -59,3 +59,5 @@ class tinker:
                                             num_modes=self._num_modes)
         energy = None
         return modes, energy
+
+

@@ -28,7 +28,7 @@ molecule.multiplicity = 1
 simulation = res.MonteCarlo(molecule)
 
 #Run Monte Carlo simulation with cartesian algorithm using simulation object & conditions
-result = monte.calculate_MonteCarlo_cartesian(simulation, conditions)
+result = monte.calculate_MonteCarlo(simulation, conditions)
 
 
 #Save results to data files

@@ -210,41 +210,6 @@ def get_modes_from_tinker(molecule, force_field='mm3.prm', num_modes=None):
 
     return total_modes
 
-def create_symop_file(molecule, symmetry, label, connect, central_atom):
-
-    temp_file_name = '../symmetry'+ '_' + str(os.getpid()) + '.zdat'
-
-    symop_input_file = open(temp_file_name, 'w')
-    if label:
-        symop_input_file.write('%label')
-    if connect:
-        symop_input_file.write('%connect')
-    symop_input_file.write(str(molecule.get_number_of_atoms()) + ' ' + str(central_atom) + '\n' + symmetry + '\nA\n')
-    for i in range(molecule.get_number_of_atoms()):
-        line = str(list(molecule.get_atomic_elements()[i]) +
-                   list(molecule.get_coordinates()[i])
-        ).strip('[]').replace(',', '').replace("'", "")
-        symop_input_file.write(line + '\n\n')
-
-    return symop_input_file
-
-
-def get_symmetry(molecule, symmetry='c 5', label=False, connect=False, central_atom=0):
-
-    symop_input_file = create_symop_file(molecule, symmetry, label, connect, central_atom)
-    symop_input_file.close()
-
-    symop_process = Popen(['../External/symop', symop_input_file.name], stdout=PIPE)
-    symop_process.wait()
-
-    measure = float(open(symop_input_file.name[:-4]+'ztab','r').readlines()[-1].split()[-1])
-
-    os.remove(symop_input_file.name)
-    os.remove(symop_input_file.name[:-4]+'ztab')
-    os.remove(symop_input_file.name[:-4]+'zout')
-
-    return measure
-
 
 if __name__ == '__main__':
 
