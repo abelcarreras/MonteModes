@@ -74,7 +74,7 @@ def get_energy_from_tinker(molecule, force_field = 'mm3.prm'):
     if not os.path.isfile(key_file_name):
         key_file_name = ''
 
-    tinker_command = 'External/analyze ' + tinker_input_file.name + \
+    tinker_command = 'analyze ' + tinker_input_file.name + \
                      ' Data/' + force_field + ' E -k ' + key_file_name
 
 
