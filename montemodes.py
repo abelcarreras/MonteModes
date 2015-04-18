@@ -4,12 +4,12 @@ import montemodes.functions.reading as io_monte
 import montemodes.functions.calculate as calculate
 import montemodes.functions.montecarlo as monte
 import montemodes.functions.methods as meth
-import montemodes.classes.results  as res
+import montemodes.classes.results as res
 import montemodes.functions.symop as symop
 
-gaussian_pm3 = meth.gaussian(methodology='am1',
+gaussian_calc = meth.gaussian(methodology='am1',
                              internal=False)
-tinker_mm3 = meth.tinker(parameter_set='mm3.prm')
+tinker_calc = meth.tinker(parameter_set='mm3.prm')
 
 
 conditions = res.Conditions(temperature=500,
@@ -18,16 +18,16 @@ conditions = res.Conditions(temperature=500,
                             acceptation_regulator=0.1,
                      #       number_of_modes_to_use=10,
                             number_of_values_for_average=4,
-                            energy_method=tinker_mm3)
+                            energy_method=tinker_calc)
 
 #molecule = io_monte.reading_from_xyz_file('test.xyz')
 molecule = io_monte.reading_from_txyz_file('Data/ethane.txyz')
 #molecule = io_monte.reading_from_gzmat_file('test.gzmat')
+
 molecule.charge = 0
 molecule.multiplicity = 1
 
 simulation = res.MonteCarlo(molecule)
-
 
 
 if False:
@@ -35,10 +35,6 @@ if False:
     conditions, simulation = io_monte.load_from_dump(filename='test.obj')
     conditions.number_of_cycles = 1000
 
-
-#result = monte.calculate_MonteCarlo_internal(simulation, conditions, show_text=True)
-
-#result = monte.calculate_MonteCarlo_cartesian(simulation, conditions)
 
 result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='cartesian')
 
@@ -122,7 +118,7 @@ print 'Initial Energy:', energy
 
 
 #Perform Monte Carlo simulation
-result = monte.calculate_MonteCarlo_mode(simulation, conditions)
+result = monte.calculate_MonteCarlo(simulation, conditions)
 
 #Show result plot
 plt.plot(result.energy)
