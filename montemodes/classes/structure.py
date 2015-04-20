@@ -283,7 +283,11 @@ class Structure:
         if self._atomic_masses is None:
  #           print([atom_data[np.where(np.array(atom_data)==i)[0]][3] for i in self.get_atomic_elements()])
  #           exit()
-            self._atomic_masses = np.array([[atom_data[np.where(np.array(atom_data)==i)[0]][3] for i in self.get_atomic_elements()]]).T
+            try:
+                self._atomic_masses = np.array([[atom_data[np.where(np.array(atom_data)==i)[0]][3] for i in self.get_atomic_elements()]]).T
+            except TypeError:
+                print('Error reading element labels')
+                exit()
         return  self._atomic_masses
 
 atom_data = [

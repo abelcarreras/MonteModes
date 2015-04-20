@@ -9,7 +9,7 @@ import montemodes.functions.symop as symop
 
 gaussian_calc = meth.gaussian(methodology='am1',
                              internal=False)
-tinker_calc = meth.tinker(parameter_set='mm3.prm')
+tinker_calc = meth.tinker(parameter_set='charmm22.prm')
 
 
 conditions = res.Conditions(temperature=500,
@@ -21,7 +21,7 @@ conditions = res.Conditions(temperature=500,
                             energy_method=tinker_calc)
 
 #molecule = io_monte.reading_from_xyz_file('test.xyz')
-molecule = io_monte.reading_from_txyz_file('Data/ethane.txyz')
+molecule = io_monte.reading_from_txyz_file('dialanine.xyz')
 #molecule = io_monte.reading_from_gzmat_file('test.gzmat')
 
 molecule.charge = 0
@@ -36,7 +36,7 @@ if False:
     conditions.number_of_cycles = 1000
 
 
-result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='cartesian')
+result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='modes')
 
 
 #Symmetry
