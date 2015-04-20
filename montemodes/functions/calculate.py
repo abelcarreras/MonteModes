@@ -210,7 +210,6 @@ def get_modes_from_tinker(molecule, force_field='mm3.prm', num_modes=None):
 
     return total_modes
 
-
 if __name__ == '__main__':
 
     import montemodes.functions.reading as io_monte

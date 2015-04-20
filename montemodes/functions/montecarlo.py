@@ -105,8 +105,10 @@ def calculate_MonteCarlo(simulation, conditions, show_text=True, alteration_type
 
     molecule = copy.deepcopy(simulation.trajectory[-1])
 
-    print 'Temperature', conditions.temperature
-    print('Starting at:',simulation.number_of_cycles)
+    print 'Temperature {0}'.format(conditions.temperature)
+    print('Starting at:{0}'.format(simulation.number_of_cycles))
+    if show_text:
+        print('Energy(current)   Energy(on test)  Acceptation   cv')
     for iteration in range(simulation.number_of_cycles, simulation.number_of_cycles + conditions.number_of_cycles):
 
         simulation.update_acceptation_vector(iteration, conditions)
@@ -116,9 +118,9 @@ def calculate_MonteCarlo(simulation, conditions, show_text=True, alteration_type
         molecule_altered = alteration[alteration_type](molecule, conditions)
 
         if show_text:
-            print('{0:12.5f} {1:12.5f}    {2:2.3f}'.format(molecule.get_energy(conditions.energy_method),
+            print('{0:12.5f} {1:12.5f}    {2:2.3f}  {3:2.3e} '.format(molecule.get_energy(conditions.energy_method),
                   molecule_altered.get_energy(conditions.energy_method),
-                  simulation.acceptation_ratio))
+                  simulation.acceptation_ratio, simulation.get_cv(conditions)))
 
         if molecule.get_energy(conditions.energy_method) < molecule_altered.get_energy(conditions.energy_method):
             energy_ratio = math.exp((molecule.get_energy(conditions.energy_method) - molecule_altered.get_energy(conditions.energy_method))

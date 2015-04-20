@@ -9,19 +9,19 @@ import montemodes.functions.symop as symop
 
 gaussian_calc = meth.gaussian(methodology='am1',
                              internal=False)
-tinker_calc = meth.tinker(parameter_set='charmm22.prm')
+tinker_calc = meth.tinker(parameter_set='mm3.prm')
 
 
-conditions = res.Conditions(temperature=500,
-                            number_of_cycles=10,
-                            initial_expansion_factor=0.05,
+conditions = res.Conditions(temperature=200,
+                            number_of_cycles=1000,
+                            initial_expansion_factor=1000.5,
                             acceptation_regulator=0.1,
                      #       number_of_modes_to_use=10,
-                            number_of_values_for_average=4,
+                            number_of_values_for_average=50,
                             energy_method=tinker_calc)
 
 #molecule = io_monte.reading_from_xyz_file('test.xyz')
-molecule = io_monte.reading_from_txyz_file('dialanine.xyz')
+molecule = io_monte.reading_from_txyz_file('Data/ethane.txyz')
 #molecule = io_monte.reading_from_gzmat_file('test.gzmat')
 
 molecule.charge = 0
@@ -34,6 +34,7 @@ if False:
     print('Recovering...')
     conditions, simulation = io_monte.load_from_dump(filename='test.obj')
     conditions.number_of_cycles = 1000
+    conditions.number_of_vales_for_average = 100
 
 
 result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='modes')
@@ -45,11 +46,14 @@ symop_c3 = symop.Symop(symmetry='s',
                        connect=False,
                        central_atom=0)
 
-symmetry_list = symop.get_symmetry_trajectory(result.trajectory, symop_c3)
-io_monte.write_list_to_file(symmetry_list,'symmetry.txt')
+#symmetry_list = symop.get_symmetry_trajectory(result.trajectory, symop_c3)
+#io_monte.write_list_to_file(symmetry_list,'symmetry.txt')
 
-print(symmetry_list)
-plt.plot(symmetry_list)
+#print(symmetry_list)
+#plt.plot(symmetry_list)
+#plt.show()
+
+plt.plot(result.cv)
 plt.show()
 
 
@@ -62,6 +66,7 @@ plt.show()
 
 io_monte.write_result_to_file(result, 'test.out')
 io_monte.write_result_trajectory(result.trajectory, 'out.xyz')
+
 
 #Save dump to file to continue from this point
 io_monte.save_to_dump(conditions,result,filename='test.obj')

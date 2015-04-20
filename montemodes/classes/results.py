@@ -60,6 +60,7 @@ class MonteCarlo:
         self._accepted_vector = [0]
         self._acceptation_ratio = 0
         self._trajectory.append(molecule)
+        self._cv = [0]
 
     @property
     def trajectory(self):
@@ -95,6 +96,7 @@ class MonteCarlo:
     @property
     def acceptation_ratio(self):
         return self._acceptation_ratio
+
     @property
     def acceptation_ratio_vector(self):
         return self._acceptation_ratio_vector
@@ -102,22 +104,18 @@ class MonteCarlo:
     def update_acceptation_vector(self, iteration, conditions):
 
         number_average = conditions.number_of_vales_for_average
- #       print('-----')
- #       print(self._accepted_vector)
- #       print(number_average)
- #       print(iteration)
 
         if iteration > 0:
- #           for k in reversed(range(len(self._accepted_vector))):
+
             for k in range(len(self._accepted_vector)-1,-1,-1):
                 if self._accepted_vector[k] <= (iteration - number_average) or k == 0:
                     self._acceptation_ratio = float(len(self._accepted_vector[k+1:]))/min(iteration+1,number_average)
- #                   print('k',k,len(self._accepted_vector[k+1:]),min(iteration+1,number_average))
                     break
 
             self._acceptation_ratio_vector.append(self._acceptation_ratio)
- #           self._acceptation_ratio_vector = self._acceptation_ratio_vector [-max_acceptation_ratio_vector:]
 
+            # Update cv
+            self._cv.append(self.get_cv(conditions))
 
     def add_accepted(self, iteration, conditions):
         max_accepted_vector_length = conditions.number_of_vales_for_average
@@ -128,6 +126,16 @@ class MonteCarlo:
         self._energy = None
         self._trajectory = None
         self._accepted = None
+
+    @property
+    def cv(self):
+        return self._cv
+
+    def get_cv(self, conditions):
+            energy = np.array(self.energy[-conditions.number_of_vales_for_average:])
+            fluctuation =  np.average(energy**2)-np.average(energy)**2
+            return fluctuation/(conditions.kb*conditions.temperature**2)
+
 
 
 class Conditions:
