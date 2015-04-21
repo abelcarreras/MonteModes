@@ -13,12 +13,12 @@ tinker_calc = meth.tinker(parameter_set='mm3.prm')
 
 
 conditions = res.Conditions(temperature=200,
-                            number_of_cycles=1000,
+                            number_of_cycles=10,
                             initial_expansion_factor=1000.5,
                             acceptation_regulator=0.1,
                      #       number_of_modes_to_use=10,
                             number_of_values_for_average=50,
-                            energy_method=tinker_calc)
+                            energy_method=gaussian_calc)
 
 #molecule = io_monte.reading_from_xyz_file('test.xyz')
 molecule = io_monte.reading_from_txyz_file('Data/ethane.txyz')

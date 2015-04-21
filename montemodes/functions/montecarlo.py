@@ -108,7 +108,7 @@ def calculate_MonteCarlo(simulation, conditions, show_text=True, alteration_type
     print 'Temperature {0}'.format(conditions.temperature)
     print('Starting at:{0}'.format(simulation.number_of_cycles))
     if show_text:
-        print('Energy(current)   Energy(on test)  Acceptation   cv')
+        print(' Energy(cur)   Energy(test) Accept   cv')
     for iteration in range(simulation.number_of_cycles, simulation.number_of_cycles + conditions.number_of_cycles):
 
         simulation.update_acceptation_vector(iteration, conditions)
