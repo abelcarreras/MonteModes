@@ -40,10 +40,12 @@ io_monte.write_result_trajectory(result.trajectory, 'trajectory.xyz')
 
 
 #shape analysis
-shape_input = shape.Shape(shape_code='1 1',
-                          central_atom=0)
+shape_linear = shape.Shape(vertices=2,
+                           code=1,
+                           central_atom=0)
 
-shape_list = shape.get_shape_trajectory(result.trajectory, shape_input)
+
+shape_list = shape.get_shape_trajectory(result.trajectory, shape_linear)
 io_monte.write_list_to_file(shape_list, 'shape.txt')
 
 

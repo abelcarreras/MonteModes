@@ -5,14 +5,20 @@ class Shape:
 
     def __init__(self,
                  central_atom=0,
-                 shape_code="1 1"):
+                 code=1,
+                 vertices=2):
 
-        self._shape_code = shape_code
+        self._code = code
+        self._vertices = vertices
         self._central_atom = central_atom
 
     @property
-    def shape_code(self):
-        return self._shape_code
+    def code(self):
+        return self._code
+
+    @property
+    def vertices(self):
+        return self._vertices
 
     @property
     def central_atom(self):
@@ -22,20 +28,21 @@ class Shape:
 
 def create_shape_file(molecule, input_data):
 
-    shape_code = input_data.shape_code
+    code = input_data.code
+    vertices = input_data.vertices
     central_atom = input_data.central_atom
 
     if central_atom == 0:
-        number_of_vertex = len(molecule.get_coordinates())
+        ligands = len(molecule.get_coordinates())
     else:
-        number_of_vertex = len(molecule.get_coordinates()) - 1
+        ligands = len(molecule.get_coordinates()) - 1
 
-    temp_file_name = 'shape'+ '_' + str(os.getpid()) + '.dat'
+    temp_file_name = 'shape' + '_' + str(os.getpid()) + '.dat'
 
     shape_input_file = open(temp_file_name, 'w')
 
-    shape_input_file.write('{0} {1}\n'.format(number_of_vertex,central_atom))
-    shape_input_file.write(shape_code+'\n' )
+    shape_input_file.write('{0} {1}\n'.format(ligands, central_atom))
+    shape_input_file.write('{0} {1}\n'.format(vertices, code) )
 
     shape_input_file.write('montemodes\n')
 
@@ -55,12 +62,10 @@ def get_shape(molecule, input_data):
     symop_process = Popen(['shape', shape_input_file.name], stdout=PIPE)
     symop_process.wait()
 
-   # print(open(shape_input_file.name[:-4]+'.tab','r').readlines()[-4])
     measure = float(open(shape_input_file.name[:-4]+'.tab','r').readlines()[-1].split()[-1])
 
     os.remove(shape_input_file.name)
     os.remove(shape_input_file.name[:-4]+'.tab')
- #   os.remove(shape_input_file.name[:-4]+'out')
 
     return measure
 
@@ -80,7 +85,7 @@ if __name__ == '__main__':
    # molecule = io_monte.reading_from_gzmat_file('../test.gzmat')
     molecule = io_monte.reading_from_xyz_file('../../test.xyz')
   #  molecule = io_monte.reading_from_txyz_file('../../Data/ethane.txyz')
-    shape_input = Shape(shape_code='1 1')
+    shape_input = Shape(code=1)
 
 
     print(get_shape(molecule, shape_input))

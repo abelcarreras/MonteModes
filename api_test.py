@@ -52,8 +52,9 @@ result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='mod
 
 #shape
 
-shape_input = shape.Shape(shape_code='1 1',
-                          central_atom=0)
+shape_input = shape.Shape(vertices=2,
+                          code=1,
+                          central_atom=1)
 
 
 
