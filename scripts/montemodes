@@ -5,6 +5,7 @@ import montemodes.functions.montecarlo as monte
 import montemodes.functions.methods as method
 import  montemodes.classes.results as res
 import montemodes.functions.symop as symop
+import montemodes.functions.shape as shape
 
 #Define energy calculation methodology
 gaussian_calc = method.gaussian(methodology='pm6',
@@ -37,6 +38,15 @@ result = monte.calculate_MonteCarlo(simulation, conditions,
 io_monte.write_result_to_file(result, 'test.out')
 io_monte.write_result_trajectory(result.trajectory, 'trajectory.xyz')
 
+
+#shape analysis
+shape_input = shape.Shape(shape_code='1 1',
+                          central_atom=0)
+
+shape_list = shape.get_shape_trajectory(result.trajectory, shape_input)
+io_monte.write_list_to_file(shape_list, 'shape.txt')
+
+
 #Symmetry analysis
 symop_c3 = symop.Symop(symmetry='c 3',
                        label=False,
@@ -44,7 +54,7 @@ symop_c3 = symop.Symop(symmetry='c 3',
                        central_atom=0)
 
 symmetry_list = symop.get_symmetry_trajectory(result.trajectory, symop_c3)
-io_monte.write_list_to_file(symmetry_list,'symmetry.txt')
+io_monte.write_list_to_file(symmetry_list, 'symmetry.txt')
 
 
 #Save full simulation to file (contains all data) [Can be used to restart the simulation]

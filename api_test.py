@@ -7,6 +7,12 @@ import montemodes.functions.methods as meth
 import montemodes.classes.results as res
 import montemodes.functions.symop as symop
 
+import montemodes.functions.shape as shape
+
+
+
+
+
 gaussian_calc = meth.gaussian(methodology='am1',
                              internal=False)
 tinker_calc = meth.tinker(parameter_set='mm3.prm')
@@ -27,6 +33,10 @@ molecule = io_monte.reading_from_txyz_file('Data/ethane.txyz')
 molecule.charge = 0
 molecule.multiplicity = 1
 
+
+
+
+
 simulation = res.MonteCarlo(molecule)
 
 
@@ -40,18 +50,33 @@ if False:
 result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='modes')
 
 
+#shape
+
+shape_input = shape.Shape(shape_code='1 1',
+                          central_atom=0)
+
+
+
+shape_list = shape.get_shape_trajectory(result.trajectory, shape_input)
+io_monte.write_list_to_file(shape_list,'shape.txt')
+
+print(shape_list)
+plt.plot(shape_list)
+plt.show()
+
+
 #Symmetry
 symop_c3 = symop.Symop(symmetry='s',
                        label=False,
                        connect=False,
                        central_atom=0)
 
-#symmetry_list = symop.get_symmetry_trajectory(result.trajectory, symop_c3)
-#io_monte.write_list_to_file(symmetry_list,'symmetry.txt')
+symmetry_list = symop.get_symmetry_trajectory(result.trajectory, symop_c3)
+io_monte.write_list_to_file(symmetry_list,'symmetry.txt')
 
-#print(symmetry_list)
-#plt.plot(symmetry_list)
-#plt.show()
+print(symmetry_list)
+plt.plot(symmetry_list)
+plt.show()
 
 plt.plot(result.cv)
 plt.show()
