@@ -15,6 +15,7 @@ import montemodes.functions.shape as shape
 
 gaussian_calc = meth.gaussian(methodology='am1',
                              internal=False)
+
 tinker_calc = meth.tinker(parameter_set='mm3.prm')
 
 
@@ -59,6 +60,7 @@ shape_input = shape.Shape(vertices=2,
 
 
 shape_list = shape.get_shape_trajectory(result.trajectory, shape_input)
+shape_list = shape_list[5:]
 io_monte.write_list_to_file(shape_list,'shape.txt')
 
 print(shape_list)

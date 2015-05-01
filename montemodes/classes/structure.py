@@ -4,46 +4,6 @@ import os
 
 import numpy as np
 
-
-def int_to_xyz_old(molecule):
-    temp_file_name = tempfile.gettempdir() + '/structure_temp'+ '_' + str(os.getpid())
-
-    gaussian_input_file = open(temp_file_name + '.gzmat',mode='w')
-
-    gaussian_input_file.write('%NProcShared = 6\n#p M062X/LANL2DZ NOSYMM opt=Z-matrix NOFMM 5D 7F' + '\n\n')
-    gaussian_input_file.write('model [Hf(C6F5)6]2- prisma HF=-4414.3959893' + '\n\n')
-
-    gaussian_input_file.write('-2 1:\n')
-    for i in range(molecule.get_z_matrix().shape[0]):
-        line = str([list(molecule.get_atomic_elements_with_dummy()[i]) +
-                    list(molecule.get_z_matrix()[i])]).strip('[]').replace('[', '').replace(',', '').replace("'", "")
-        gaussian_input_file.write(line + '\n')
-
-    gaussian_input_file.write('Variables:\n')
-
-
-    for i in range(molecule.get_int_label().shape[0]):
-        line = str([list(molecule.get_int_label()[i]) +
-                    list(molecule.get_internal()[i])]).strip('[]').replace('[', '').replace(',', '').replace("'", "")
-        gaussian_input_file.write(line + '\n')
-
-    gaussian_input_file.write('\n')
-
-    gaussian_input_file.close()
-
-    os.system("babel -igzmat " + temp_file_name + ".gzmat -oxyz " + temp_file_name + ".xyz 2> /dev/null" )
-    xyz_file = open(temp_file_name + ".xyz", 'r')
-    lines = xyz_file.readlines()
-    number_of_atoms = int(lines[0])
-  #  print(number_of_atoms, temp_file_name)
-    coordinates = []
-    for i in range(number_of_atoms):
-        coordinates.append(lines[i+2].split()[1:4])
-
-    xyz_file.close()
-
-    return np.array(coordinates, dtype=float)
-
 def int_to_xyz(molecule, no_dummy=True):
 
     internal = molecule.get_full_z_matrix()

@@ -3,6 +3,7 @@ import subprocess
 import os
 import glob
 from subprocess import Popen, PIPE
+from multiprocessing import  cpu_count
 
 import numpy as np
 
@@ -30,15 +31,18 @@ def create_tinker_input(molecule):
     return tinker_input_file
 
 
-def create_gaussian_input(molecule, calculation='pm6', internal=False, type='energy'):
+def create_gaussian_input(molecule, calculation='pm6', internal=False, type='energy', processors=1):
 
     dict = {'energy' : ' ', 'vibration' : ' freq '}
+
+    if processors is None:
+        processors = cpu_count()
 
 
     multiplicity = molecule.multiplicity
     charge = molecule.charge
-
-    input_file = '#'+dict[type]+calculation+'\n\nPython Input\n\n'+str(charge)+' '+str(multiplicity)+'\n'
+    input_file = '%NProcShared={0}\n'.format(processors)
+    input_file += '#'+dict[type]+calculation+'\n\nPython Input\n\n'+str(charge)+' '+str(multiplicity)+'\n'
 
  #Zmatrix
     if internal:
@@ -93,11 +97,12 @@ def get_energy_from_tinker(molecule, force_field = 'mm3.prm'):
     return energy
 
 
-def get_energy_from_gaussian(molecule, calculation='pm6', internal=False):
+def get_energy_from_gaussian(molecule, calculation='pm6', internal=False, processors=1):
 
     input_data = create_gaussian_input(molecule,
                                        calculation=calculation,
-                                       internal=internal)
+                                       internal=internal,
+                                       processors=processors)
 
     conversion = 627.503 # hartree to kcal/mol
 

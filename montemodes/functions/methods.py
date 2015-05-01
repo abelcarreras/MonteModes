@@ -1,6 +1,7 @@
 __author__ = 'abel'
 import montemodes.functions.calculate as calc
 
+
 method_function = {
     1: calc.get_energy_from_tinker,
     2: calc.get_energy_from_gaussian
@@ -21,9 +22,11 @@ class gaussian:
 
 
     def single_point(self, molecule):
+
         return calc.get_energy_from_gaussian(molecule,
                                              calculation=self._methodology,
-                                             internal=self._internal)
+                                             internal=self._internal,
+                                             processors=self._processors)
 
     def vibrations(self, molecule):
         modes, energy = calc.get_modes_from_gaussian(molecule,

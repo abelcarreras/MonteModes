@@ -39,7 +39,7 @@ io_monte.write_result_to_file(result, 'test.out')
 io_monte.write_result_trajectory(result.trajectory, 'trajectory.xyz')
 
 
-#shape analysis
+#Shape analysis
 shape_linear = shape.Shape(vertices=2,
                            code=1,
                            central_atom=0)
