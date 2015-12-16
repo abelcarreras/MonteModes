@@ -67,7 +67,6 @@ print(shape_list)
 plt.plot(shape_list)
 plt.show()
 
-
 #Symmetry
 symop_c3 = symop.Symop(symmetry='s',
                        label=False,
@@ -83,7 +82,6 @@ plt.show()
 
 plt.plot(result.cv)
 plt.show()
-
 
 #Show result plot
 plt.plot(result.energy)

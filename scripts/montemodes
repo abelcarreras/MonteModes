@@ -62,3 +62,4 @@ io_monte.write_list_to_file(symmetry_list, 'symmetry.txt')
 #Save full simulation to file (contains all data) [Can be used to restart the simulation]
 io_monte.save_to_dump(conditions, result, filename='full.obj')
 
+io_monte.load_from_dump(filename='full.obj')
