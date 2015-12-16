@@ -10,7 +10,6 @@ Installation instructions
 ---------------------------------------------------------
 1. Requirements
 Python 2.7 or higher
-Phonopy (http://phonopy.sourceforge.net)
 Matplotlib
 numpy
 Scipy
@@ -19,6 +18,9 @@ Scipy
 
 3. Run setup.py script to install
 python setup.py install --user
+
+4. Use script montemodes inside scripts folder as a model
+to run your calculation. No interface available yer.
 
 ---------------------------------------------------------
 Contact info
