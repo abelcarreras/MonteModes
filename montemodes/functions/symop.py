@@ -61,7 +61,7 @@ def get_symmetry(molecule, input_data):
     symop_input_file = create_symop_file(molecule, input_data)
     symop_input_file.close()
 
-    symop_process = Popen(['symop', symop_input_file.name], stdout=PIPE)
+    symop_process = Popen('symop '+ symop_input_file.name, stderr=PIPE, stdout=PIPE, shell=True)
     symop_process.wait()
 
     measure = float(open(symop_input_file.name[:-4]+'ztab','r').readlines()[-1].split()[-1])

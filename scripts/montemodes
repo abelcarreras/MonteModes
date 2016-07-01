@@ -13,14 +13,14 @@ gaussian_calc = method.gaussian(methodology='pm6',
 
 #Define MC simulation conditions
 conditions = res.Conditions(temperature=500,
-                            number_of_cycles=50,
+                            number_of_cycles=5,
                             initial_expansion_factor=0.05,
                             acceptation_regulator=0.1,
-                            number_of_values_for_average=50,
+                            number_of_values_for_average=5,
                             energy_method=gaussian_calc)
 
 #Read initial structure from xyz file
-molecule = io_monte.reading_from_xyz_file('test.xyz')
+molecule = io_monte.reading_from_xyz_file('../Example/test.xyz')
 
 #Add additional information to molecule
 molecule.charge = 0
@@ -40,13 +40,23 @@ io_monte.write_result_trajectory(result.trajectory, 'trajectory.xyz')
 
 
 #Shape analysis
-shape_linear = shape.Shape(vertices=2,
-                           code=1,
-                           central_atom=0)
+shape_m1 = shape.Shape(vertices=2,
+                       code=1,
+                       custom_atom_list=[4, 5, 6, 7],
+                       central_atom=0)
+
+shape_m2 = shape.Shape(vertices=2,
+                       code=2,
+                       custom_atom_list=[4, 5, 6, 7],
+                       central_atom=0)
 
 
-shape_list = shape.get_shape_trajectory(result.trajectory, shape_linear)
-io_monte.write_list_to_file(shape_list, 'shape.txt')
+shape_list_m1 = shape.get_shape_trajectory(result.trajectory, shape_m1)
+shape_list_m2 = shape.get_shape_trajectory(result.trajectory, shape_m2)
+
+io_monte.write_list_to_file(zip(shape_list_m1,shape_list_m2), 'shape.txt')
+
+
 
 
 #Symmetry analysis

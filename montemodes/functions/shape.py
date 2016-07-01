@@ -6,11 +6,14 @@ class Shape:
     def __init__(self,
                  central_atom=0,
                  code=1,
-                 vertices=2):
+                 vertices=2,
+                 custom_atom_list=None):
 
         self._code = code
         self._vertices = vertices
         self._central_atom = central_atom
+        self._custom_atom_list = custom_atom_list
+
 
     @property
     def code(self):
@@ -24,6 +27,9 @@ class Shape:
     def central_atom(self):
         return self._central_atom
 
+    @property
+    def custom_atom_list(self):
+        return self._custom_atom_list
 
 
 def create_shape_file(molecule, input_data):
@@ -31,11 +37,15 @@ def create_shape_file(molecule, input_data):
     code = input_data.code
     vertices = input_data.vertices
     central_atom = input_data.central_atom
+    atoms_list = input_data.custom_atom_list
+
+    if isinstance(atoms_list, type(None)):
+        atoms_list = range(molecule.get_number_of_atoms())
 
     if central_atom == 0:
-        ligands = len(molecule.get_coordinates())
+        ligands = len(atoms_list)
     else:
-        ligands = len(molecule.get_coordinates()) - 1
+        ligands = len(atoms_list) - 1
 
     temp_file_name = 'shape' + '_' + str(os.getpid()) + '.dat'
 
@@ -46,7 +56,7 @@ def create_shape_file(molecule, input_data):
 
     shape_input_file.write('montemodes\n')
 
-    for i in range(molecule.get_number_of_atoms()):
+    for i in atoms_list:
         line = str(list(molecule.get_atomic_elements()[i]) +
                    list(molecule.get_coordinates()[i])
         ).strip('[]').replace(',', '').replace("'", "")
@@ -59,7 +69,7 @@ def get_shape(molecule, input_data):
 
     shape_input_file = create_shape_file(molecule, input_data)
     shape_input_file.close()
-    symop_process = Popen(['shape', shape_input_file.name], stdout=PIPE)
+    symop_process = Popen('shape '+ shape_input_file.name, stdout=PIPE, shell=True)
     symop_process.wait()
 
     measure = float(open(shape_input_file.name[:-4]+'.tab','r').readlines()[-1].split()[-1])

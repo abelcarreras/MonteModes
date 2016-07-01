@@ -160,7 +160,11 @@ def write_result_to_file(result, file_name):
 def write_list_to_file(list, file_name):
     list_file = open(file_name, 'w')
     for i, value in enumerate(list):
-        list_file.write("{0} {1}\n".format(i,value))
+        if isinstance(value,type(())):
+            list_file.write("{0} {1}\n".format(i, ' '.join("%.6f" % x for x in value)))
+        else:
+            list_file.write("{0} {1:.6f}\n".format(i, value))
+
 
     list_file.close()
 
