@@ -40,13 +40,11 @@ io_monte.write_result_trajectory(result.trajectory, 'trajectory.xyz')
 
 
 #Shape analysis
-shape_m1 = shape.Shape(vertices=2,
-                       code=1,
+shape_m1 = shape.Shape(code=1,
                        custom_atom_list=[4, 5, 6, 7],
                        central_atom=0)
 
-shape_m2 = shape.Shape(vertices=2,
-                       code=2,
+shape_m2 = shape.Shape(code=2,
                        custom_atom_list=[4, 5, 6, 7],
                        central_atom=0)
 

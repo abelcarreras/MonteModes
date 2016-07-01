@@ -6,11 +6,9 @@ class Shape:
     def __init__(self,
                  central_atom=0,
                  code=1,
-                 vertices=2,
                  custom_atom_list=None):
 
         self._code = code
-        self._vertices = vertices
         self._central_atom = central_atom
         self._custom_atom_list = custom_atom_list
 
@@ -18,10 +16,6 @@ class Shape:
     @property
     def code(self):
         return self._code
-
-    @property
-    def vertices(self):
-        return self._vertices
 
     @property
     def central_atom(self):
@@ -35,7 +29,6 @@ class Shape:
 def create_shape_file(molecule, input_data):
 
     code = input_data.code
-    vertices = input_data.vertices
     central_atom = input_data.central_atom
     atoms_list = input_data.custom_atom_list
 
@@ -52,7 +45,7 @@ def create_shape_file(molecule, input_data):
     shape_input_file = open(temp_file_name, 'w')
 
     shape_input_file.write('{0} {1}\n'.format(ligands, central_atom))
-    shape_input_file.write('{0} {1}\n'.format(vertices, code) )
+    shape_input_file.write('{0}\n'.format(code))
 
     shape_input_file.write('montemodes\n')
 
