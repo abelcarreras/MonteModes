@@ -52,7 +52,7 @@ shape_m2 = shape.Shape(code=2,
 shape_list_m1 = shape.get_shape_trajectory(result.trajectory, shape_m1)
 shape_list_m2 = shape.get_shape_trajectory(result.trajectory, shape_m2)
 
-io_monte.write_list_to_file(zip(shape_list_m1,shape_list_m2), 'shape.txt')
+io_monte.write_list_to_file(zip(shape_list_m1,shape_list_m2), 'shape.txt',label=["measure1", "measure2"])
 
 
 
