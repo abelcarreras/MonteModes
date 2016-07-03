@@ -14,7 +14,8 @@ Matplotlib
 numpy
 Scipy
 
-2. Download the source code and place it in the installation directory
+2. Download the source code and place it in the installation 
+directory
 
 3. Run setup.py script to install
 python setup.py install --user
