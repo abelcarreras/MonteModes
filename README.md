@@ -1,5 +1,5 @@
 ---------------------------------------------------------
-MONTEMODES 0.9
+MONTEMODES 0.9.1
 ---------------------------------------------------------
 Program to calculate Monte Carlo simulations of molecular
 systems following the normal modes coordinates. Internal
@@ -20,7 +20,7 @@ Scipy
 python setup.py install --user
 
 4. Use script montemodes inside scripts folder as a model
-to run your calculation. No interface available yer.
+to run your calculation. No interface available yet.
 
 ---------------------------------------------------------
 Contact info

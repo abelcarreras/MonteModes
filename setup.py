@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(name='montemodes',
-      version='0.9',
+      version='0.9.1',
       description='montemodes module',
       author='Abel Carreras',
       url='https://github.com/abelcarreras/Montemodes',
