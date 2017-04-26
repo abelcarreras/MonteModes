@@ -58,9 +58,9 @@ def create_symop_file(molecule, input_data):
 
     symop_input_file = open(temp_file_name, 'w')
     if label:
-        symop_input_file.write('%label')
+        symop_input_file.write('%label\n')
     if connect:
-        symop_input_file.write('%connect')
+        symop_input_file.write('%connect\n')
     symop_input_file.write(str(ligands) + ' ' + str(central_atom) + '\n\n' + symmetry + '\nA\n')
     for i in range(molecule.get_number_of_atoms()):
         line = str(list(molecule.get_atomic_elements()[i]) +
@@ -86,13 +86,13 @@ def get_symmetry(molecule, input_data):
 
     return measure
 
+
 def get_symmetry_trajectory(trajectory, input_data):
     symmetry_list = []
     for molecule in trajectory[1:]:
         symmetry_list.append(get_symmetry(molecule, input_data))
 
     return symmetry_list
-
 
 
 if __name__ == '__main__':
