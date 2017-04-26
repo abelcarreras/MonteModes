@@ -3,7 +3,7 @@
 import montemodes.functions.reading as io_monte
 import montemodes.functions.montecarlo as monte
 import montemodes.functions.methods as method
-import  montemodes.classes.results as res
+import montemodes.classes.results as res
 import montemodes.functions.symop as symop
 import montemodes.functions.shape as shape
 

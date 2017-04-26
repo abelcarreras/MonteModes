@@ -46,12 +46,12 @@ def create_symop_file(molecule, input_data):
         symop_input_file.write('%label')
     if connect:
         symop_input_file.write('%connect')
-    symop_input_file.write(str(molecule.get_number_of_atoms()) + ' ' + str(central_atom) + '\n' + symmetry + '\nA\n')
+    symop_input_file.write(str(molecule.get_number_of_atoms()) + ' ' + str(central_atom) + '\n\n' + symmetry + '\nA\n')
     for i in range(molecule.get_number_of_atoms()):
         line = str(list(molecule.get_atomic_elements()[i]) +
                    list(molecule.get_coordinates()[i])
         ).strip('[]').replace(',', '').replace("'", "")
-        symop_input_file.write(line + '\n\n')
+        symop_input_file.write(line + '\n')
 
     return symop_input_file
 
@@ -65,7 +65,6 @@ def get_symmetry(molecule, input_data):
     symop_process.wait()
 
     measure = float(open(symop_input_file.name[:-4]+'ztab','r').readlines()[-1].split()[-1])
-
     os.remove(symop_input_file.name)
     os.remove(symop_input_file.name[:-4]+'ztab')
     os.remove(symop_input_file.name[:-4]+'zout')
@@ -92,4 +91,3 @@ if __name__ == '__main__':
 
 
     print(get_symmetry(molecule, symop_input))
-
