@@ -7,12 +7,14 @@ class Symop:
                  symmetry='c 5',
                  label=False,
                  connect=False,
-                 central_atom=0):
+                 central_atom=0,
+                 custom_atom_list=None):
 
         self._symmetry = symmetry
         self._label = label
         self._connect = connect
         self._central_atom = central_atom
+        self._custom_atom_list = custom_atom_list
 
     @property
     def symmetry(self):
@@ -30,6 +32,9 @@ class Symop:
     def central_atom(self):
         return self._central_atom
 
+    @property
+    def custom_atom_list(self):
+        return self._custom_atom_list
 
 
 def create_symop_file(molecule, input_data):
@@ -39,6 +44,16 @@ def create_symop_file(molecule, input_data):
     central_atom = input_data.central_atom
     symmetry = input_data.symmetry
 
+    atoms_list = input_data.custom_atom_list
+
+    if isinstance(atoms_list, type(None)):
+        atoms_list = range(molecule.get_number_of_atoms())
+
+    if central_atom == 0:
+        ligands = len(atoms_list)
+    else:
+        ligands = len(atoms_list) - 1
+
     temp_file_name = 'symmetry'+ '_' + str(os.getpid()) + '.zdat'
 
     symop_input_file = open(temp_file_name, 'w')
@@ -46,7 +61,7 @@ def create_symop_file(molecule, input_data):
         symop_input_file.write('%label')
     if connect:
         symop_input_file.write('%connect')
-    symop_input_file.write(str(molecule.get_number_of_atoms()) + ' ' + str(central_atom) + '\n\n' + symmetry + '\nA\n')
+    symop_input_file.write(str(ligands) + ' ' + str(central_atom) + '\n\n' + symmetry + '\nA\n')
     for i in range(molecule.get_number_of_atoms()):
         line = str(list(molecule.get_atomic_elements()[i]) +
                    list(molecule.get_coordinates()[i])
@@ -91,3 +106,4 @@ if __name__ == '__main__':
 
 
     print(get_symmetry(molecule, symop_input))
+
