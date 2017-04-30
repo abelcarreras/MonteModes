@@ -47,6 +47,22 @@ def int_to_xyz(molecule, no_dummy=True):
     return np.array(coordinates, dtype=float)
 
 
+def rotation_matrix(axis, theta):
+    """
+    Return the rotation matrix associated with counterclockwise rotation about
+    the given axis by theta radians.
+    """
+    axis = np.asarray(axis)
+    theta = np.asarray(theta)
+    axis = axis/np.sqrt(np.dot(axis, axis))
+    a = np.cos(theta/2)
+    b, c, d = -axis*np.sin(theta/2)
+    aa, bb, cc, dd = a*a, b*b, c*c, d*d
+    bc, ad, ac, ab, bd, cd = b*c, a*d, a*c, a*b, b*d, c*d
+    return np.array([[aa+bb-cc-dd, 2*(bc+ad), 2*(bd-ac)],
+                     [2*(bc-ad), aa+cc-bb-dd, 2*(cd+ab)],
+                     [2*(bd+ac), 2*(cd-ab), aa+dd-bb-cc]])
+
 
 class Structure:
 
@@ -241,8 +257,8 @@ class Structure:
 
     def get_atomic_masses(self):
         if self._atomic_masses is None:
- #           print([atom_data[np.where(np.array(atom_data)==i)[0]][3] for i in self.get_atomic_elements()])
- #           exit()
+            # print([atom_data[np.where(np.array(atom_data)==i)[0]][3] for i in self.get_atomic_elements()])
+            # exit()
             try:
                 self._atomic_masses = np.array([[atom_data[np.where(np.array(atom_data)==i)[0]][3] for i in self.get_atomic_elements()]]).T
             except TypeError:
@@ -372,24 +388,6 @@ atom_data = [
     [118, "Uuo", "Ununoctium", 0], # 118
     ]
 
-def rotation_matrix(axis, theta):
-    """
-    Return the rotation matrix associated with counterclockwise rotation about
-    the given axis by theta radians.
-    """
-    axis = np.asarray(axis)
-    theta = np.asarray(theta)
-    axis = axis/np.sqrt(np.dot(axis, axis))
-    a = np.cos(theta/2)
-    b, c, d = -axis*np.sin(theta/2)
-    aa, bb, cc, dd = a*a, b*b, c*c, d*d
-    bc, ad, ac, ab, bd, cd = b*c, a*d, a*c, a*b, b*d, c*d
-    return np.array([[aa+bb-cc-dd, 2*(bc+ad), 2*(bd-ac)],
-                     [2*(bc-ad), aa+cc-bb-dd, 2*(cd+ab)],
-                     [2*(bd+ac), 2*(cd-ab), aa+dd-bb-cc]])
-
-
-
 if __name__ == '__main__':
     import montemodes.functions.methods as meth
     import montemodes.functions.reading as io_monte
@@ -401,7 +399,5 @@ if __name__ == '__main__':
 
     print(gaussian_pm3.function(molecule))
 
-
-
-   # print(molecule.get_full_z_matrix())
+    # print(molecule.get_full_z_matrix())
     print(len(int_to_xyz(molecule)))

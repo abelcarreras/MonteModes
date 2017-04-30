@@ -4,8 +4,7 @@ import montemodes.functions.reading as io_monte
 import montemodes.functions.montecarlo as monte
 import montemodes.functions.methods as method
 import montemodes.classes.results as res
-import montemodes.functions.symop as symop
-import montemodes.functions.shape as shape
+from montemodes.analysis.symmetry_analysis import get_symmetry_analysis
 
 
 #Define energy calculation methodology
@@ -13,18 +12,18 @@ gaussian_calc = method.gaussian(methodology='pm6',
                                internal=False)
 
 #Define MC simulation conditions
-conditions = res.Conditions(temperature=500,
-                            number_of_cycles=5,
+conditions = res.Conditions(temperature=50000,
+                            number_of_cycles=50,
                             initial_expansion_factor=0.05,
                             acceptation_regulator=0.1,
                             number_of_values_for_average=5,
                             energy_method=gaussian_calc)
 
 #Read initial structure from xyz file
-molecule = io_monte.reading_from_xyz_file('../Example/test.xyz')
+molecule = io_monte.reading_from_xyz_file('../Example/po4.xyz')
 
 #Add additional information to molecule
-molecule.charge = 0
+molecule.charge = -3
 molecule.multiplicity = 1
 
 #Create MD simulation object from molecule
@@ -45,30 +44,15 @@ io_monte.write_result_trajectory(result.trajectory, 'trajectory.xyz')
 io_monte.save_to_dump(conditions, result, filename='full.obj')
 io_monte.load_from_dump(filename='full.obj')
 
-#Shape analysis
-print 'shape analysis'
-shape_m1 = shape.Shape(code=1,
-                       custom_atom_list=[4, 5, 6, 7],
-                       central_atom=0)
 
-shape_m2 = shape.Shape(code=2,
-                       custom_atom_list=[4, 5, 6, 7],
-                       central_atom=0)
+# Symmetry analysis
+proportion = get_symmetry_analysis(result.trajectory,
+                                   symmetry_to_analyze=['c 2', 'c 3', 's 4', 'r'],
+                                   shape_to_analyze=2,
+                                   central_atom=5,
+                                   symmetry_threshold=0.1,
+                                   cutoff_shape=3.0,
+                                   show_plots=True)
 
-
-shape_list_m1 = shape.get_shape_trajectory(result.trajectory, shape_m1)
-shape_list_m2 = shape.get_shape_trajectory(result.trajectory, shape_m2)
-
-io_monte.write_list_to_file(zip(shape_list_m1,shape_list_m2), 'shape.txt',label=["measure1", "measure2"])
-
-
-
-#Symop analysis
-print 'symop analysis'
-symop_c3 = symop.Symop(symmetry='c 3',
-                       label=False,
-                       connect=False,
-                       central_atom=0)
-
-symmetry_list = symop.get_symmetry_trajectory(result.trajectory, symop_c3)
-io_monte.write_list_to_file(symmetry_list, 'symmetry.txt')
+print 'proportions'
+print proportion
