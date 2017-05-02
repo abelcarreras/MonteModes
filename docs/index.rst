@@ -12,6 +12,7 @@ the energy at each step.
    :caption: Table of contents
 
    install
+   symmetry_shape
    remarks
 
 

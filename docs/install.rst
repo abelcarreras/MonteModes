@@ -2,6 +2,9 @@
 Install the code
 ================
 
+Install
+-------
+
 Download the code and use :file: `setup.py` to install the code using :program: `setuptools`
 python module. A simple setup could be ::
 

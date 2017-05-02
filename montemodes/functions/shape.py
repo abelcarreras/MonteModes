@@ -26,7 +26,7 @@ class Shape:
         return self._custom_atom_list
 
 
-def create_shape_file(molecule, input_data):
+def _create_shape_file(molecule, input_data):
 
     code = input_data.code
     central_atom = input_data.central_atom
@@ -60,7 +60,7 @@ def create_shape_file(molecule, input_data):
 
 def get_shape(molecule, input_data):
 
-    shape_input_file = create_shape_file(molecule, input_data)
+    shape_input_file = _create_shape_file(molecule, input_data)
     shape_input_file.close()
     shape_process = Popen('shape ' + shape_input_file.name, stdout=PIPE, shell=True)
     shape_process.wait()
