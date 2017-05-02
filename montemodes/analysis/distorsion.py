@@ -68,6 +68,23 @@ def get_distortion_indices_angles(molecule, type_1, type_2, type_3):
     # return np.std(distances)
 
 
+def get_distortion_statistic_analysis(structures, function, arguments, show_plots=True):
+
+    distortion = []
+    for structure in structures:
+        argument_list = [structure] + arguments
+
+        dist = function(*argument_list)
+        distortion.append(dist)
+
+    if show_plots:
+        import matplotlib.pyplot as pl
+        pl.hist(distortion, histtype='step', normed=True)
+        pl.show()
+
+    return {'average': np.average(distortion),
+            'deviation': np.std(distortion)}
+
 if __name__ == '__main__':
 
     import montemodes.functions.reading as io_monte
@@ -75,7 +92,5 @@ if __name__ == '__main__':
     # Read initial structure from xyz file
     molecule1 = io_monte.reading_from_xyz_file('../../Example/po4.xyz')
 
-    print get_distortion_indices_angles(molecule1, 'O', 'O', 'O')
-    exit()
-
+    print get_distortion_indices_angles(molecule1, 'O', 'P', 'O')
     print get_distortion_indices_distances(molecule1, 'O', 'P')
