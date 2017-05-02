@@ -1,29 +1,17 @@
 .. highlight:: rst
 
-This is the MonteModes documentation
+Introduction
 =====================================
 
-This is a test of the documentation for montemodes
-.. math:: e^{i\pi} + 1 = 0
-   :label: euler
+Montemodes is a software to calculate Monte Carlo simulations using the
+Metropolis algorithm. This software connects with Gaussian or Tinker to calculate
+the energy at each step.
 
-Euler's identity, equation :eq:`euler`, was elected one of the most
-beautiful mathematical formulas.
+.. toctree::
+   :maxdepth: 2
+   :caption: Table of contents
 
-Install the code
-------------------------------------
-
-Download the code and use :file: `setup.py` to install the code
-
-The you can call the script :program:`montemodes` to execute the code.
-Finally,  Just run ::
-
-   $ montemodes
-
-and the software is executed.
+   install
+   remarks
 
 
-Final remarks
----------------------------
-
-Here the example ends. No more.
