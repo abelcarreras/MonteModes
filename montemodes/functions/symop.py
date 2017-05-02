@@ -37,7 +37,7 @@ class Symop:
         return self._custom_atom_list
 
 
-def create_symop_file(molecule, input_data):
+def _create_symop_file(molecule, input_data):
 
     label = input_data.label
     connect = input_data.connect
@@ -73,7 +73,7 @@ def create_symop_file(molecule, input_data):
 
 def get_symmetry(molecule, input_data):
 
-    symop_input_file = create_symop_file(molecule, input_data)
+    symop_input_file = _create_symop_file(molecule, input_data)
     symop_input_file.close()
 
     symop_process = Popen('symop '+ symop_input_file.name, stderr=PIPE, stdout=PIPE, shell=True)
