@@ -11,9 +11,8 @@ The calculation method define the software to use to calculate the atomic intera
 Two software are implemented: :program:`Gaussian09` and :program:`Tinker`. To use these calculators, Gaussian and/or Tinker
 should be installed in your system and the binaries (or hard links to them) should be placed in a
 directory included in the $PATH environment variable with the name :program:`g09` and :program:`tinker`,
-respectively. Note that setting up an alias in :file:`.profile` or :file:`bashrc` for these software will
+respectively. Note that setting up an alias in :file:`.profile` or :file:`.bashrc` for these software will
 not work.
-
 
 Gaussian 09 ::
 
@@ -58,8 +57,8 @@ Conditions object contains the parameters of the Monte Carlo simulation ::
 - number_of_values_for_average: Number of last simulation steps used to calculate the averaged properties.
 - kb: Boltzmann constant according to the units of energy and temperature
 
-Montecarlo object
-+++++++++++++++++
+Run the simulation
+------------------
 
 Montecarlo object contains all the information concerting to the simulation. This object is generated from a
 structure object tha contains the initial structure ::
@@ -90,7 +89,7 @@ The returned Montecarlo object can be used again in the *calculate_MonteCarlo()*
 
 
 Save results to data files
-++++++++++++++++++++++++++
+--------------------------
 
 To save the MonteCarlo data into files some helper functions are available in ::
 
@@ -111,4 +110,40 @@ Save the full simulation objects into a file ::
 Load the simulation objects from a file ::
 
     $ load_from_dump(filename='full.obj')
+
+
+
+Example
+-------
+::
+
+    $ import montemodes.functions.reading as io_monte
+    $ import montemodes.functions.montecarlo as monte
+    $ import montemodes.functions.methods as method
+    $ import montemodes.classes.results as res
+
+
+    $ gaussian_calc = method.gaussian(methodology='pm6',
+                                      internal=False)
+
+    $ conditions = res.Conditions(temperature=500,
+                                  number_of_cycles=1000,
+                                  initial_expansion_factor=0.05,
+                                  acceptation_regulator=0.1,
+                                  number_of_values_for_average=20,
+                                  energy_method=gaussian_calc)
+
+    $ initial_structure = io_monte.reading_from_xyz_file('molecule.xyz')
+    $ initial_structure.charge = 0
+    $ initial_structure.multiplicity = 1
+
+    $ simulation = res.MonteCarlo(initial_structure)
+
+    $ result = monte.calculate_MonteCarlo(simulation,
+                                          conditions,
+                                          show_text=True,
+                                          alteration_type='cartesian')
+
+    $ io_monte.write_result_to_file(result, 'montecarlo.out')
+    $ io_monte.write_result_trajectory(result.trajectory, 'trajectory.xyz')
 
