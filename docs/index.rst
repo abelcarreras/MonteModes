@@ -15,6 +15,4 @@ the energy at each step.
    structure
    montecarlo
    symmetry_shape
-   remarks
-
 
