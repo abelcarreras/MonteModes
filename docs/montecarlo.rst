@@ -111,3 +111,4 @@ Save the full simulation objects into a file ::
 Load the simulation objects from a file ::
 
     $ load_from_dump(filename='full.obj')
+
