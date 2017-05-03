@@ -4,7 +4,7 @@ Symmetry and shape analysis
 
 The symetry and shape analysis is calculated using the external software :program: `shape`, :program: `symop`,
 and :program: `symgroup`. To use the interfaces to the binaries have to be placed in a directory included in the
-$PATH enviroment variable with the name :program:`shape`, :program:`symop`, and :program:`symgroup`, respectively.
+$PATH environment variable with the name :program:`shape`, :program:`symop`, and :program:`symgroup`, respectively.
 Note that setting up an alias in :file:`.profile` or :file:`bashrc` for these software will not work.
 
 Shape
@@ -30,14 +30,14 @@ is None all atoms are used.
 methods
 +++++++
 
-- get_shape(structure [type Structure], input_shape [type Shape]:
+- get_shape(structure [type Structure], input_shape [type Shape]):
 
             Return: Float
 
 Get the shape measure of a structure
 
 
-- get_shape_trajectory(trajectory [list of Structure objects], input_shape [type Shape]:
+- get_shape_trajectory(trajectory [list of Structure objects], input_shape [type Shape]):
 
             Return: List of Float
 

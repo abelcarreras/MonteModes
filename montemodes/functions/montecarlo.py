@@ -139,6 +139,7 @@ def calculate_MonteCarlo(simulation, conditions, show_text=True, alteration_type
 if __name__ == '__main__':
 
     import montemodes.functions.reading as io_monte
+    import montemodes.classes.results as res
 
     conditions = res.Conditions(temperature=500,
                                 number_of_cycles=5,

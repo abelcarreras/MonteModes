@@ -140,7 +140,7 @@ class MonteCarlo:
 
 class Conditions:
     def __init__(self,
-                 number_of_cycles=None,
+                 number_of_cycles=100000,
                  kb=0.0019872041, # kcal/mol
                  temperature_frequency_relation=0.694989, #K/cm
                  temperature=None,

@@ -43,7 +43,7 @@ io_monte.write_result_trajectory(result.trajectory, 'trajectory.xyz')
 
 #Save full simulation to file (contains all data) [Can be used to restart the simulation]
 io_monte.save_to_dump(conditions, result, filename='full.obj')
-io_monte.load_from_dump(filename='full.obj')
+conditions, result = io_monte.load_from_dump(filename='full.obj')
 
 #Shape analysis
 print 'shape analysis'

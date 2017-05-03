@@ -10,7 +10,6 @@ import numpy as np
 import montemodes.classes.results as res
 
 
-
 def create_tinker_input(molecule):
 
     temp_file_name = tempfile.gettempdir() + '/tinker_temp'+ '_' + str(os.getpid())
@@ -44,7 +43,7 @@ def create_gaussian_input(molecule, calculation='pm6', internal=False, type='ene
     input_file = '%NProcShared={0}\n'.format(processors)
     input_file += '#'+dict[type]+calculation+'\n\nPython Input\n\n'+str(charge)+' '+str(multiplicity)+'\n'
 
- #Zmatrix
+ # Z-matrix
     if internal:
         atomic_elements = molecule.get_atomic_elements_with_dummy()[:, 0]
         z_matrix = molecule.get_z_matrix()
@@ -58,7 +57,7 @@ def create_gaussian_input(molecule, calculation='pm6', internal=False, type='ene
         for label in internal_labels:
             input_file += (label[0] + '\t' +
                            str(molecule.get_int_dict()[label[0]])+'\n')
-  #Cartessian
+  # Cartessian
     else:
         atomic_elements = molecule.get_atomic_elements()[:, 0]
         coordinates = molecule.get_coordinates()
@@ -97,7 +96,7 @@ def get_energy_from_tinker(molecule, force_field = 'mm3.prm'):
     return energy
 
 
-def get_energy_from_gaussian(molecule, calculation='pm6', internal=False, processors=1):
+def get_energy_from_gaussian(molecule, calculation='pm6', internal=False, processors=1, binary='g09'):
 
     input_data = create_gaussian_input(molecule,
                                        calculation=calculation,
@@ -106,7 +105,7 @@ def get_energy_from_gaussian(molecule, calculation='pm6', internal=False, proces
 
     conversion = 627.503 # hartree to kcal/mol
 
-    gaussian_process = Popen('g09', stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=True)
+    gaussian_process = Popen(binary, stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=True)
     (output, err) = gaussian_process.communicate(input=input_data)
     gaussian_process.wait()
 
@@ -118,15 +117,16 @@ def get_energy_from_gaussian(molecule, calculation='pm6', internal=False, proces
         energy = 1E20
     return energy * conversion
 
-def get_modes_from_gaussian(molecule, calculation='pm6', internal=False):
+
+def get_modes_from_gaussian(molecule, calculation='pm6', internal=False, binary='g09'):
 
     input_data = create_gaussian_input(molecule,
-                                   calculation=calculation,
-                                   internal=internal,
-                                   type='vibration')
+                                       calculation=calculation,
+                                       internal=internal,
+                                       type='vibration')
 
-    conversion = 627.503 # hartree to kcal/mol
-    gaussian_process = Popen('g09', stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=True)
+    conversion = 627.503  # Hartree to kcal/mol
+    gaussian_process = Popen(binary, stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=True)
     (output, err) = gaussian_process.communicate(input=input_data)
     gaussian_process.wait()
 
@@ -164,7 +164,6 @@ def get_modes_from_gaussian(molecule, calculation='pm6', internal=False):
 
 
 def get_modes_from_tinker(molecule, force_field='mm3.prm', num_modes=None):
-
 
     if num_modes is None:
         tinker_list = ' A'

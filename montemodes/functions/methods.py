@@ -13,12 +13,14 @@ class gaussian:
                  methodology='pm3',
                  internal=False,
                  memory=None,
-                 processors=None):
+                 processors=None,
+                 binary='g09'):
 
         self._methodology = methodology
         self._memory = memory
         self._processors = processors
-        self._internal=internal
+        self._internal = internal
+        self._binary = binary
 
 
     def single_point(self, molecule):
@@ -26,11 +28,13 @@ class gaussian:
         return calc.get_energy_from_gaussian(molecule,
                                              calculation=self._methodology,
                                              internal=self._internal,
-                                             processors=self._processors)
+                                             processors=self._processors,
+                                             binary=self._binary)
 
     def vibrations(self, molecule):
         modes, energy = calc.get_modes_from_gaussian(molecule,
-                                                     calculation=self._methodology)
+                                                     calculation=self._methodology,
+                                                     binary=self._binary)
         return modes, energy
 
 
