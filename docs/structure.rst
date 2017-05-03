@@ -116,19 +116,19 @@ example
 
 ::
 
-    $ initial_coordinates = [[ 0.5784585,  0.7670811,  1.3587379],
-                            [-1.7015514, -0.0389921, -0.0374715],
-                            [ 0.5784290, -1.6512236, -0.0374715],
-                            [ 0.5784585,  0.7670811, -1.4336809],
-                            [ 0.0000000,  0.0000000,  0.0000000]]
-    $ initial_coordinates = np.array(initial_coordinates)
+    initial_coordinates = [[ 0.5784585,  0.7670811,  1.3587379],
+                           [-1.7015514, -0.0389921, -0.0374715],
+                           [ 0.5784290, -1.6512236, -0.0374715],
+                           [ 0.5784585,  0.7670811, -1.4336809],
+                           [ 0.0000000,  0.0000000,  0.0000000]]
+    initial_coordinates = np.array(initial_coordinates)
 
-    $ atomic_elements = ['O', 'O', 'O', 'O', 'P']
-    $ atomic_elements = np.array(atomic_elements)[None].T
+    atomic_elements = ['O', 'O', 'O', 'O', 'P']
+    atomic_elements = np.array(atomic_elements)[None].T
 
-    $ molecule = Structure(coordinates=initial_coordinates,
+    molecule = Structure(coordinates=initial_coordinates,
                            atomic_elements=atomic_elements)
 
-    $ molecule.charge = 0
-    $ molecule.multiplicity = 1
+    molecule.charge = 0
+    molecule.multiplicity = 1
 
