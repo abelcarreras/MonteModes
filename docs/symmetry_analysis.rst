@@ -36,7 +36,7 @@ These functions can be called from a list of Structure type objects to return a 
                     'deviation': deviation [Float]}
 
 
-Exemple
+Example
 +++++++
 ::
 
