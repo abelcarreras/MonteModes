@@ -67,14 +67,4 @@ Exemple
     print 'averages: {} {} and deviations: {} {}'.format(stat_OP['average'], stat_OPO['average'],
                                                          stat_OP['deviation'], stat_OPO['deviation'])
 
-Symmetry classification
 
-    proportion = get_symmetry_analysis(structures,
-                                       symmetry_to_analyze=['c 2', 'c 3', 's 4', 'r'],
-                                       shape_to_analyze=2,
-                                       central_atom=5,
-                                       symmetry_threshold=0.15,
-                                       cutoff_shape=5.0,
-                                       show_plots=False)
-
-    total_proportions.append(proportion)
