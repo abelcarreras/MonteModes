@@ -18,7 +18,7 @@ Gaussian 09 ::
 
     from montecarlo.functions.method import gaussian
     calculator = gaussian(methodology='pm6' [String],
-                          internal=False [Logic],
+                          internal=False [Boolean],
                           processors=None [Integer])
 
 - methodology: Method label to use in :program:`Gaussian09`. This argument should contain the basis set if it is
@@ -72,7 +72,7 @@ that contains the results ::
     from montecarlo.functions.montecarlo import calculate_MonteCarlo
     simulation = calculate_MonteCarlo(simulation [Montecarlo type],
                                       conditions [Conditions type],
-                                      show_text=True [Logic],
+                                      show_text=True [Boolean],
                                       alteration_type='cartesian' [String])
       Return result [Montecarlo type]
 

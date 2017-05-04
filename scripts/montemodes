@@ -45,6 +45,8 @@ io_monte.write_result_trajectory(result.trajectory, 'trajectory.xyz')
 io_monte.save_to_dump(conditions, result, filename='full.obj')
 conditions, result = io_monte.load_from_dump(filename='full.obj')
 
+
+
 #Shape analysis
 print 'shape analysis'
 shape_m1 = shape.Shape(code=1,
