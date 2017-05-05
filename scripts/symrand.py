@@ -3,6 +3,13 @@ from montemodes.classes.structure import Structure
 from montemodes.analysis.symmetry_analysis import get_symmetry_analysis
 import montemodes.analysis.distorsion as distorsion
 
+import functions.shape
+
+print functions.shape.get_info(vertices=4)
+
+exit()
+
+
 def random_alteration_coordinates_box(initial_coordinates, fix_center=None, max_displacement=0.2):
     displacement = 2 * max_displacement * (np.random.random(np.array(initial_coordinates).shape) - 0.5)
     if fix_center is not None:
