@@ -54,9 +54,12 @@ def reading_from_xyz_file(file_name):
     coordinates = np.array(coordinates,dtype=float)
     xyz_file.close()
 
+    if coordinates.shape[1] !=3:
+        print 'XYZ file reading error'
+        exit()
     return structure.Structure(coordinates=np.array(coordinates, dtype=float),
-                                   atomic_elements=np.array(atomic_elements, dtype=str)[None].T,
-                                   file_name=xyz_file.name)
+                               atomic_elements=np.array(atomic_elements, dtype=str)[None].T,
+                               file_name=xyz_file.name)
 
 
 

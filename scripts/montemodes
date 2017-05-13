@@ -21,10 +21,11 @@ conditions = res.Conditions(temperature=500,
                             energy_method=gaussian_calc)
 
 #Read initial structure from xyz file
-molecule = io_monte.reading_from_xyz_file('../Example/test.xyz')
+molecule = io_monte.reading_from_xyz_file('../Example/po4.xyz')
+
 
 #Add additional information to molecule
-molecule.charge = 0
+molecule.charge = -3
 molecule.multiplicity = 1
 
 #Create MD simulation object from molecule
@@ -50,11 +51,11 @@ conditions, result = io_monte.load_from_dump(filename='full.obj')
 #Shape analysis
 print 'shape analysis'
 shape_m1 = shape.Shape(code=1,
-                       custom_atom_list=[4, 5, 6, 7],
+                    #   custom_atom_list=[4, 5, 6, 7],
                        central_atom=0)
 
 shape_m2 = shape.Shape(code=2,
-                       custom_atom_list=[4, 5, 6, 7],
+                     #  custom_atom_list=[4, 5, 6, 7],
                        central_atom=0)
 
 

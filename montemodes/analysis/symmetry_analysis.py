@@ -27,6 +27,7 @@ def get_symmetry_analysis(structures,
     list_symmetry = [[] for _ in range(len(symgroup_type_list))]
 
     not_accepted = 0
+    classified_structures = {}
     for mod_structure in structures:
 
         # Shape measures
@@ -50,6 +51,7 @@ def get_symmetry_analysis(structures,
         other = True
         for i, measure_symmetry in enumerate(np.array(list_symmetry)[:, -1]):
             if measure_symmetry < symmetry_threshold:
+                classified_structures[measure_symmetry].append(mod_structure)
                 proportion[i] += 1.0
                 other = False
 
