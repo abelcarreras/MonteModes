@@ -27,8 +27,8 @@ conditions = res.Conditions(temperature=200,
                             number_of_values_for_average=50,
                             energy_method=gaussian_calc)
 
-#molecule = io_monte.reading_from_xyz_file('test.xyz')
-molecule = io_monte.reading_from_txyz_file('Data/ethane.txyz')
+molecule = io_monte.reading_from_xyz_file('scripts/benze_i.xyz')
+#molecule = io_monte.reading_from_txyz_file('Data/ethane.txyz')
 #molecule = io_monte.reading_from_gzmat_file('test.gzmat')
 
 molecule.charge = 0
@@ -53,8 +53,7 @@ result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='mod
 
 #shape
 
-shape_input = shape.Shape(vertices=2,
-                          code=1,
+shape_input = shape.Shape(code=1,
                           central_atom=1)
 
 
