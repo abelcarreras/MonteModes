@@ -213,7 +213,7 @@ class Structure:
         self._atomic_numbers = atomic_numbers
 
     def get_atomic_elements(self):
-        return np.array([i for i in self._atomic_elements if i != "X"], dtype=str)
+        return np.array([[i[0].upper()] for i in self._atomic_elements if i != "X"], dtype=str)
    #     return self._atomic_elements
 
     def set_atomic_elements(self, atomic_elements):
@@ -259,6 +259,7 @@ class Structure:
         if self._atomic_masses is None:
             # print([atom_data[np.where(np.array(atom_data)==i)[0]][3] for i in self.get_atomic_elements()])
             # exit()
+
             try:
                 self._atomic_masses = np.array([[atom_data[np.where(np.array(atom_data)==i)[0]][3] for i in self.get_atomic_elements()]]).T
             except TypeError:
