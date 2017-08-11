@@ -10,9 +10,6 @@ import montemodes.functions.symop as symop
 import montemodes.functions.shape as shape
 
 
-
-
-
 gaussian_calc = meth.gaussian(methodology='am1',
                              internal=False)
 
@@ -20,22 +17,19 @@ tinker_calc = meth.tinker(parameter_set='mm3.prm')
 
 
 conditions = res.Conditions(temperature=200,
-                            number_of_cycles=10,
+                            number_of_cycles=100,
                             initial_expansion_factor=1000.5,
                             acceptation_regulator=0.1,
                      #       number_of_modes_to_use=10,
                             number_of_values_for_average=50,
-                            energy_method=gaussian_calc)
+                            energy_method=tinker_calc)
 
-molecule = io_monte.reading_from_xyz_file('scripts/benze_i.xyz')
-#molecule = io_monte.reading_from_txyz_file('Data/ethane.txyz')
+#molecule = io_monte.reading_from_xyz_file('Example/po4.xyz')
+molecule = io_monte.reading_from_txyz_file('Example/ethane.txyz')
 #molecule = io_monte.reading_from_gzmat_file('test.gzmat')
 
 molecule.charge = 0
 molecule.multiplicity = 1
-
-
-
 
 
 simulation = res.MonteCarlo(molecule)
@@ -47,8 +41,8 @@ if False:
     conditions.number_of_cycles = 1000
     conditions.number_of_vales_for_average = 100
 
-
 result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='modes')
+#result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='cartesian')
 
 
 #shape
@@ -65,6 +59,8 @@ io_monte.write_list_to_file(shape_list,'shape.txt')
 print(shape_list)
 plt.plot(shape_list)
 plt.show()
+
+exit()
 
 #Symmetry
 symop_c3 = symop.Symop(symmetry='s',

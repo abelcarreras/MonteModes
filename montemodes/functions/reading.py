@@ -27,7 +27,6 @@ def reading_from_txyz_file(file_name):
     # print(np.array(coordinates,dtype=float))
 
     tinker_file.close()
-
     return structure.Structure(coordinates=np.array(coordinates, dtype=float),
                                atom_types=np.array(atom_types, dtype=int)[None].T,
                                atomic_elements=np.array(atomic_elements, dtype=str)[None].T,
