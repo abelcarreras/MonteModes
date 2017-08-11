@@ -17,10 +17,10 @@ tinker_calc = meth.tinker(parameter_set='mm3.prm')
 
 
 conditions = res.Conditions(temperature=200,
-                            number_of_cycles=100,
+                            number_of_cycles=500,
                             initial_expansion_factor=1000.5,
                             acceptation_regulator=0.1,
-                     #       number_of_modes_to_use=10,
+                            number_of_modes_to_use=15,
                             number_of_values_for_average=50,
                             energy_method=gaussian_calc)
 
@@ -56,9 +56,22 @@ shape_list = shape.get_shape_trajectory(result.trajectory, shape_input)
 shape_list = shape_list[5:]
 io_monte.write_list_to_file(shape_list,'shape.txt')
 
+plt.plot(result.energy)
+plt.show()
+
+plt.plot(result.acceptation_ratio_vector)
+plt.show()
+
+plt.plot(result.cv)
+plt.show()
+
+
 print(shape_list)
 plt.plot(shape_list)
 plt.show()
+
+
+
 
 exit()
 
@@ -84,6 +97,8 @@ plt.show()
 
 plt.plot(result.acceptation_ratio_vector)
 plt.show()
+
+
 
 io_monte.write_result_to_file(result, 'test.out')
 io_monte.write_result_trajectory(result.trajectory, 'out.xyz')

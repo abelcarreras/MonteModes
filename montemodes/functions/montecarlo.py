@@ -21,12 +21,14 @@ def weighted_choice(weights):
 def alteration_with_modes(molecule, conditions):
     altered_coordinates = molecule.get_coordinates()
     random_number = random.uniform(0, 1)
-
     vibration = molecule.get_modes(conditions.energy_method)
+    normalization = 1
 
     chosen = random.randrange(len(vibration.frequencies))
 
     if conditions.number_of_modes_to_use is not None:
+        normalization = len(vibration.frequencies)/conditions.number_of_modes_to_use
+
         if conditions.number_of_modes_to_use < len(vibration.frequencies):
             chosen = random.randrange(conditions.number_of_modes_to_use)
 
@@ -34,7 +36,8 @@ def alteration_with_modes(molecule, conditions):
         altered_coordinates += ( np.sqrt(conditions.expansion_factor*random_number*molecule.get_atomic_masses())
                              * pow(vibration.frequencies[chosen],-1)
                              * random.choice([1,-1])
-                             * vibration.normalized_modes[chosen])
+                             * vibration.normalized_modes[chosen]
+                             * normalization)
 #                               * math.exp(
 #            -conditions.temperature_frequency_relation * vibration.frequencies[i] / conditions.temperature)
 
