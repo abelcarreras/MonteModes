@@ -22,7 +22,7 @@ conditions = res.Conditions(temperature=200,
                             acceptation_regulator=0.1,
                      #       number_of_modes_to_use=10,
                             number_of_values_for_average=50,
-                            energy_method=tinker_calc)
+                            energy_method=gaussian_calc)
 
 #molecule = io_monte.reading_from_xyz_file('Example/po4.xyz')
 molecule = io_monte.reading_from_txyz_file('Example/ethane.txyz')

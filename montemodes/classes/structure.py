@@ -259,7 +259,6 @@ class Structure:
         if self._atomic_masses is None:
 
             try:
-                print np.array(atom_data)
                 masses_string = np.array(atom_data)[:,3:4][[np.where(np.array(atom_data)==element)[0][0] for element in self.get_atomic_elements()]]
                 self._atomic_masses = np.array(masses_string, dtype=float)
             except TypeError:
