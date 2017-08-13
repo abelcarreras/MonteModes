@@ -213,8 +213,9 @@ class Structure:
         self._atomic_numbers = atomic_numbers
 
     def get_atomic_elements(self):
+        if self._atomic_elements is None:
+            self._atomic_elements = np.array(atom_data)[[self.get_atomic_numbers()]][:,1:2]
         return np.array([[i[0].upper()] for i in self._atomic_elements if i != "X"], dtype=str)
-   #     return self._atomic_elements
 
     def set_atomic_elements(self, atomic_elements):
         self._atomic_elements = atomic_elements
