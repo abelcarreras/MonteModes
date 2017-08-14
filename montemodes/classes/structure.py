@@ -7,7 +7,6 @@ import numpy as np
 def int_to_xyz(molecule, no_dummy=True):
 
     internal = molecule.get_full_z_matrix()
-    print internal
     coordinates = [[0.0, 0.0, 0.0]]
 
     for line in internal[1:]:
@@ -132,7 +131,8 @@ class Structure:
     def set_internal(self, internal):
         self._internal = internal
         self._energy = None
-  #      self._coordinates = int_to_xyz(self)
+        self._coordinates = int_to_xyz(self)
+        self._full_z_matrix = None
 
     def get_full_z_matrix(self):
         if self._full_z_matrix is None:

@@ -53,7 +53,6 @@ def alteration_internal_with_weights(molecule, conditions):
     altered_coordinates += np.prod([np.random.random((molecule.get_internal().shape[0],))-0.5,
                                   weights],axis=0)[None].T * conditions.expansion_factor
 
-
     altered_molecule = copy.deepcopy(molecule)
     altered_molecule.set_internal(altered_coordinates)
     return altered_molecule

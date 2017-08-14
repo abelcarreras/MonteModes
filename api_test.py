@@ -29,10 +29,7 @@ conditions = res.Conditions(temperature=200,
 #molecule = io_monte.reading_from_gzmat_file('Example/test.gzmat')
 molecule = io_monte.reading_from_gzmat_file('Example/bifenil.gzmat')
 
-print molecule.get_internal()
 print molecule.get_coordinates()
-
-
 
 molecule.charge = 0
 molecule.multiplicity = 1
@@ -52,6 +49,16 @@ if False:
 result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='internal')
 
 
+plt.plot(result.energy)
+plt.show()
+
+plt.plot(result.acceptation_ratio_vector)
+plt.show()
+
+plt.plot(result.cv)
+plt.show()
+
+
 #shape
 
 shape_input = shape.Shape(code=1,
@@ -63,14 +70,6 @@ shape_list = shape.get_shape_trajectory(result.trajectory, shape_input)
 shape_list = shape_list[5:]
 io_monte.write_list_to_file(shape_list,'shape.txt')
 
-plt.plot(result.energy)
-plt.show()
-
-plt.plot(result.acceptation_ratio_vector)
-plt.show()
-
-plt.plot(result.cv)
-plt.show()
 
 
 print(shape_list)
