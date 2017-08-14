@@ -7,10 +7,10 @@ import numpy as np
 def int_to_xyz(molecule, no_dummy=True):
 
     internal = molecule.get_full_z_matrix()
+    print internal
     coordinates = [[0.0, 0.0, 0.0]]
 
     for line in internal[1:]:
-
         bi = int(line[0])  #bond index
         B = line[1]        #bond value
         ai = int(line[2])  #Angle index
@@ -30,9 +30,12 @@ def int_to_xyz(molecule, no_dummy=True):
         ref2 = bond
         ref3 = np.cross(bond, bond2)
 
+        # Check case of linear structure
+        if np.linalg.norm(ref3) == 0:
+            ref3 = [0.0, 0.0, 0.1]
+
         inter = np.dot(rotation_matrix(ref3, np.deg2rad(A)), origin)
         final = np.dot(rotation_matrix(ref2, np.deg2rad(C)), inter)
-
         final = final + np.array(coordinates[bi-1])
         coordinates.append(final)
 
@@ -52,9 +55,15 @@ def rotation_matrix(axis, theta):
     Return the rotation matrix associated with counterclockwise rotation about
     the given axis by theta radians.
     """
+    if np.dot(axis, axis) == 0.0:
+        print 'Warning, reference rotation axis module is 0'
+        exit()
+
+
     axis = np.asarray(axis)
     theta = np.asarray(theta)
     axis = axis/np.sqrt(np.dot(axis, axis))
+
     a = np.cos(theta/2)
     b, c, d = -axis*np.sin(theta/2)
     aa, bb, cc, dd = a*a, b*b, c*c, d*d

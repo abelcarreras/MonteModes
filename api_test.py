@@ -25,8 +25,14 @@ conditions = res.Conditions(temperature=200,
                             energy_method=gaussian_calc)
 
 #molecule = io_monte.reading_from_xyz_file('Example/po4.xyz')
-molecule = io_monte.reading_from_txyz_file('Example/ethane.txyz')
-#molecule = io_monte.reading_from_gzmat_file('test.gzmat')
+#molecule = io_monte.reading_from_txyz_file('Example/ethane.txyz')
+#molecule = io_monte.reading_from_gzmat_file('Example/test.gzmat')
+molecule = io_monte.reading_from_gzmat_file('Example/bifenil.gzmat')
+
+print molecule.get_internal()
+print molecule.get_coordinates()
+
+
 
 molecule.charge = 0
 molecule.multiplicity = 1
@@ -41,8 +47,9 @@ if False:
     conditions.number_of_cycles = 1000
     conditions.number_of_vales_for_average = 100
 
-result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='modes')
+#result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='modes')
 #result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='cartesian')
+result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='internal')
 
 
 #shape
