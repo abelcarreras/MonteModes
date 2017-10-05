@@ -151,7 +151,7 @@ def write_result_trajectory(trajectory, file_name, type='xyz'):
 def write_result_to_file(result, file_name):
     result_file = open(file_name, 'w')
 
-    result_file.write('#Energy(current)\tEnergy(on test)\tAcceptation\tcv\n')
+    result_file.write('#Energy(current)\tAcceptation\tcv\n')
     for i, j, k in zip(result.energy, result.acceptation_ratio_vector, result.cv):
         result_file.write("{0:10.4f}\t{1:5.4f}\t{2:5.4e} \n".format(i, j, k))
 
