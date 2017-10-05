@@ -17,8 +17,8 @@ class Symop:
         self._custom_atom_list = custom_atom_list
 
         # Check if shape is in system path
-        if not call("type symgroup", shell=True, stdout=PIPE, stderr=PIPE) == 0:
-            print ('symgroup binary not found')
+        if not call("type symop", shell=True, stdout=PIPE, stderr=PIPE) == 0:
+            print ('symop binary not found')
             exit()
 
 

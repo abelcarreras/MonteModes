@@ -6,6 +6,8 @@ import montemodes.functions.montecarlo as monte
 import montemodes.functions.methods as meth
 import montemodes.classes.results as res
 import montemodes.functions.symop as symop
+import montemodes.functions.symgroup as symgroup
+
 
 import montemodes.functions.shape as shape
 
@@ -17,8 +19,8 @@ tinker_calc = meth.tinker(parameter_set='mm3.prm')
 
 
 conditions = res.Conditions(temperature=200,
-                            number_of_cycles=500,
-                            initial_expansion_factor=1000.5,
+                            number_of_cycles=100,
+                            initial_expansion_factor=10.5,
                             acceptation_regulator=0.1,
                             number_of_modes_to_use=15,
                             number_of_values_for_average=50,
@@ -44,9 +46,9 @@ if False:
     conditions.number_of_cycles = 1000
     conditions.number_of_vales_for_average = 100
 
-#result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='modes')
+result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='modes')
 #result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='cartesian')
-result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='internal')
+#result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='internal')
 
 
 plt.plot(result.energy)
@@ -58,7 +60,20 @@ plt.show()
 plt.plot(result.cv)
 plt.show()
 
+io_monte.write_result_trajectory(result.trajectory, file_name='bifenil_traj.xyz')
 
+print 'symgroup analysis'
+chirality = symgroup.Symgroup(symmetry='r',
+                    label=True,
+                    custom_atom_list=[0, 1 , 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                    connect=True)
+
+chirality_list = symgroup.get_symmetry_trajectory(result.trajectory, chirality)
+
+plt.plot(chirality_list)
+plt.show()
+
+exit()
 #shape
 
 shape_input = shape.Shape(code=1,
