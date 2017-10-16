@@ -145,7 +145,7 @@ class Conditions:
                  temperature_frequency_relation=0.694989, #K/cm
                  temperature=None,
                  initial_expansion_factor=None,
-                 acceptation_regulator = 1.0,
+                 acceptation_regulator=1.0,
                  number_of_modes_to_use=None,
                  number_of_values_for_average=2000,
                  energy_method = 1):
