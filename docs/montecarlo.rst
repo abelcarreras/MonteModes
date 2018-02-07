@@ -21,8 +21,7 @@ Gaussian 09 ::
                           internal=False [Boolean],
                           processors=None [Integer])
 
-- methodology: Method label to use in :program:`Gaussian09`. This argument should contain the basis set if it is
-    necessary (Ex: B3LYP/6-31G).
+- methodology: Method label to use in :program:`Gaussian09`. This argument should contain the basis set if it is necessary (Ex: B3LYP/6-31G).
 - Internal: Use internal coordinates (z-matrix).
 - Set number of processors to use in the :program:Gaussian09` calculation.
 
@@ -31,8 +30,7 @@ Tinker ::
     from montecarlo.functions.method import tinker
     calculator = tinker(parameter_set='mm3.prm' [String]):
 
-- parameter_set: name of the force field file to use. This file should be placed in the work directory or
-    full path should be specified
+- parameter_set: name of the force field file to use. This file should be placed in the work directory or full path should be specified
 
 
 Conditions
@@ -77,13 +75,10 @@ that contains the results ::
       Return result [Montecarlo type]
 
 
-- simulation: Initial Montecarlo object. If this object already contains information of a previous simulation,
- the simulation will continue adding the data of the new simulation.
+- simulation: Initial Montecarlo object. If this object already contains information of a previous simulation, the simulation will continue adding the data of the new simulation.
 - conditions: Conditions object.
-- show_text: If True writes montecarlo information on screen during the simulation calculation. If False the calculation
-is carried out silently.
-- alteration_type: Defines the way the structures are altered during each simulation step. The possible options are
-'cartesian' 'internal' or 'modes'.
+- show_text: If True writes montecarlo information on screen during the simulation calculation. If False the calculation is carried out silently.
+- alteration_type: Defines the way the structures are altered during each simulation step. The possible options are 'cartesian' 'internal' or 'modes'.
 
 The returned Montecarlo object can be used again in the *calculate_MonteCarlo()* function to continue the simulation.
 
