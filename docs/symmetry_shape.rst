@@ -22,10 +22,8 @@ shape calculation to perform ::
                                custom_atom_list=None)
 
 - code: corresponds to the shape code available in shape manual. It depends on the number of vertices.
-- central_atom: defines the atom number that will be used as central atom. Atom number uses the same rule as
-:program:`shape` where the first atom is atom number 1. If central_atom is 0 no central atom will be defined.
-- custom_atom_list: defines a list of atoms of the structure that will be used in the shape calculation. If this value
-is None all atoms are used.
+- central_atom: defines the atom number that will be used as central atom. Atom number uses the same rule as :program:`shape` where the first atom is atom number 1. If central_atom is 0 no central atom will be defined.
+- custom_atom_list: defines a list of atoms of the structure that will be used in the shape calculation. If this value is None all atoms are used.
 
 methods
 +++++++
@@ -86,10 +84,8 @@ symmetry calculation to perform ::
 - symmetry: corresponds to the symmetry operation to be measured.
 - label : if True adds %label keyword to symop input (check symop manual for further information).
 - connect : if True adds %connect keyword to symop input (check symop manual for further information).
-- central_atom: defines the atom number that will be used as central atom. Atom number uses the same rule as
-:program:`symop` where the first atom is atom number 1. If central_atom is 0 no central atom will be defined.
-- custom_atom_list: defines a list of atoms of the structure that will be used in the shape calculation. If this value
-is None all atoms are used.
+- central_atom: defines the atom number that will be used as central atom. Atom number uses the same rule as :program:`symop` where the first atom is atom number 1. If central_atom is 0 no central atom will be defined.
+- custom_atom_list: defines a list of atoms of the structure that will be used in the shape calculation. If this value is None all atoms are used.
 
 methods
 +++++++
@@ -124,5 +120,4 @@ example
 
    $ measure = get_symmetry(structure, input_symop)
    $ print ('The C3 symmetry measure of CH4 is {}'.format(measure))
-
 

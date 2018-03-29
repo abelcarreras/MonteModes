@@ -86,12 +86,9 @@ Classify the symmetry of a list of structures is symmetry categories defined by 
 - structures: List of Structure type objects to be analyzed
 - symmetry_to_analyze : List of symmetry operations to classify the structures into.
 - shape_to_analyze: Ideal shape of the structures
-- cutoff_shape: Maximum value of shape measurement (defined in shape_to_analyze) to be accepted.
-Structures with a higher value will be discarded.
-- symmetry_threshold: Maximum value of a symmetry measurement of a structure to consider that the
-structure has the measured symmetry.
-- show_plots: If True, graphical data is shown. This includes histrograms showing the distribution
- of symmetry and shape measurements.
+- cutoff_shape: Maximum value of shape measurement (defined in shape_to_analyze) to be accepted. Structures with a higher value will be discarded.
+- symmetry_threshold: Maximum value of a symmetry measurement of a structure to consider that the structure has the measured symmetry.
+- show_plots: If True, graphical data is shown. This includes histrograms showing the distribution of symmetry and shape measurements.
 
 Exemple
 +++++++
