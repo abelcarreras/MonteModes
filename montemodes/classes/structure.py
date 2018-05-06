@@ -1,8 +1,8 @@
 __author__ = 'abel'
 import tempfile
 import os
-
 import numpy as np
+
 
 def int_to_xyz(molecule, no_dummy=True):
 
@@ -85,7 +85,7 @@ class Structure:
                  connectivity=None,
                  file_name=None,
                  charge=0,
-                 multiplicity=1,
+                 #multiplicity=1,
 
                  #Buscar un lloc millor
                  int_weights=None):
@@ -99,7 +99,7 @@ class Structure:
         self._connectivity = connectivity
         self._atomic_elements = atomic_elements
         self._charge = charge
-        self._multiplicity = multiplicity
+        #self._multiplicity = multiplicity
 
         self._file_name = file_name
         self._int_weights = int_weights
@@ -107,7 +107,7 @@ class Structure:
         self._atomic_masses = None
         self._number_of_atoms = None
         self._number_of_internal = None
-        self._energy = None
+        self._energy = {}
         self._modes = None
 
         self._full_z_matrix = None
@@ -120,7 +120,7 @@ class Structure:
     def set_coordinates(self, coordinates):
         self._coordinates = coordinates
         self._number_of_atoms = None
-        self._energy = None
+        self._energy = {}
 
     def get_internal(self):
         if self._internal is None:
@@ -196,13 +196,13 @@ class Structure:
     def charge(self, charge):
         self._charge = charge
 
-    @property
-    def multiplicity(self):
-        return self._multiplicity
+    #@property
+    #def multiplicity(self):
+    #    return self._multiplicity
 
-    @multiplicity.setter
-    def multiplicity(self, multiplicity):
-        self._multiplicity = multiplicity
+    #@multiplicity.setter
+    #def multiplicity(self, multiplicity):
+    #    self._multiplicity = multiplicity
 
     def get_atom_types(self):
         if self._atom_types is None:
@@ -254,14 +254,15 @@ class Structure:
         return self._number_of_internal
 
     def get_energy(self, method=None):
-        if self._energy is None:
-            self._energy = method.single_point(self)
-        return self._energy
 
+        if '{}'.format(method.multiplicity) not in self._energy:
+            self._energy['{}'.format(method.multiplicity)] = method.single_point(self)
+        return self._energy['{}'.format(method.multiplicity)]
 
     def get_modes(self, method=None):
         if self._modes is None:
-            self._modes, self._energy = method.vibrations(self)
+            self._modes, energy = method.vibrations(self)
+            self._energy['{}'.format(method.multiplicity)] = energy
         return self._modes
 
 
@@ -402,9 +403,9 @@ if __name__ == '__main__':
     import montemodes.functions.methods as meth
     import montemodes.functions.reading as io_monte
 
-    tinker_mm3 = meth.tinker(parameter_set='mm3')
+    tinker_mm3 = meth.Tinker(parameter_set='mm3')
 
-    gaussian_pm3 = meth.gaussian()
+    gaussian_pm3 = meth.Gaussian()
     molecule = io_monte.reading_from_xyz_file('../test.xyz')
 
     print(gaussian_pm3.function(molecule))

@@ -115,7 +115,7 @@ def calculate_MonteCarlo(simulation, conditions, show_text=True, alteration_type
 
         simulation.update_acceptation_vector(iteration, conditions)
 
-        simulation.append_data_from_molecule(molecule)
+        simulation.append_data_from_molecule(molecule, conditions)
         conditions.expansion_factor = adjust_expansion_factor(simulation.acceptation_ratio_vector, conditions)
         molecule_altered = alteration[alteration_type](molecule, conditions)
 

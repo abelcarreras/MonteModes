@@ -8,8 +8,8 @@ from montemodes.analysis.symmetry_analysis import get_symmetry_analysis
 
 
 #Define energy calculation methodology
-gaussian_calc = method.gaussian(methodology='pm6',
-                               internal=False)
+gaussian_calc = method.Gaussian(methodology='pm6',
+                                internal=False)
 
 #Define MC simulation conditions
 conditions = res.Conditions(temperature=50000,

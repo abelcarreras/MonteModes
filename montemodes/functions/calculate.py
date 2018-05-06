@@ -30,15 +30,13 @@ def create_tinker_input(molecule):
     return tinker_input_file
 
 
-def create_gaussian_input(molecule, calculation='pm6', internal=False, type='energy', processors=1):
+def create_gaussian_input(molecule, calculation='pm6', internal=False, type='energy', multiplicity=1, processors=1):
 
     dict = {'energy' : ' ', 'vibration' : ' freq '}
 
     if processors is None:
         processors = cpu_count()
 
-
-    multiplicity = molecule.multiplicity
     charge = molecule.charge
     input_file = '%NProcShared={0}\n'.format(processors)
     input_file += '#'+dict[type]+calculation+'\n\nPython Input\n\n'+str(charge)+' '+str(multiplicity)+'\n'
@@ -96,12 +94,13 @@ def get_energy_from_tinker(molecule, force_field = 'mm3.prm'):
     return energy
 
 
-def get_energy_from_gaussian(molecule, calculation='pm6', internal=False, processors=1, binary='g09'):
+def get_energy_from_gaussian(molecule, calculation='pm6', internal=False, processors=1, binary='g09', multiplicity=1):
 
     input_data = create_gaussian_input(molecule,
                                        calculation=calculation,
                                        internal=internal,
-                                       processors=processors)
+                                       processors=processors,
+                                       multiplicity=multiplicity)
 
     conversion = 627.503 # hartree to kcal/mol
 
@@ -118,17 +117,23 @@ def get_energy_from_gaussian(molecule, calculation='pm6', internal=False, proces
     return energy * conversion
 
 
-def get_modes_from_gaussian(molecule, calculation='pm6', internal=False, binary='g09'):
+def get_modes_from_gaussian(molecule, calculation='pm6', internal=False, binary='g09', multiplicity=1):
 
     input_data = create_gaussian_input(molecule,
                                        calculation=calculation,
                                        internal=internal,
-                                       type='vibration')
+                                       type='vibration',
+                                       multiplicity=multiplicity)
 
     conversion = 627.503  # Hartree to kcal/mol
     gaussian_process = Popen(binary, stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=True)
     (output, err) = gaussian_process.communicate(input=input_data)
     gaussian_process.wait()
+
+    # Check if calculation is finished successfully
+    if 'Error termination' in output:
+        print ('Error in Gaussian normal modes calculation!')
+        print (output)
 
     lines = output[output.find('Frequencies'):].split()
 

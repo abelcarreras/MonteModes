@@ -61,6 +61,7 @@ class MonteCarlo:
         self._acceptation_ratio = 0
         self._trajectory.append(molecule)
         self._cv = [0]
+        self._energy_method = None
 
     @property
     def trajectory(self):
@@ -73,7 +74,8 @@ class MonteCarlo:
     @property
     def energy(self):
         if self._energy is None:
-            self._energy = [self.trajectory[i].get_energy() for i in range(1, self.number_of_data)]
+            self._energy = [self.trajectory[i].get_energy(method=self._energy_method)
+                            for i in range(1, self.number_of_data)]
         return self._energy
 
     @property
@@ -88,10 +90,13 @@ class MonteCarlo:
     def number_of_cycles(self, number_of_cycles):
         self._number_of_cycles = number_of_cycles
 
-    def append_data_from_molecule(self, molecule):
+    def append_data_from_molecule(self, molecule, conditions):
         # self._energy.append(molecule.get_energy())
         self._energy = None
         self._trajectory.append(molecule)
+
+        if self._energy_method is None:
+            self._energy_method = conditions.energy_method
 
     @property
     def acceptation_ratio(self):
@@ -133,9 +138,8 @@ class MonteCarlo:
 
     def get_cv(self, conditions):
             energy = np.array(self.energy[-conditions.number_of_vales_for_average:])
-            fluctuation =  np.average(energy**2)-np.average(energy)**2
+            fluctuation = np.average(energy**2)-np.average(energy)**2
             return fluctuation/(conditions.kb*conditions.temperature**2)
-
 
 
 class Conditions:
@@ -148,7 +152,7 @@ class Conditions:
                  acceptation_regulator=1.0,
                  number_of_modes_to_use=None,
                  number_of_values_for_average=2000,
-                 energy_method = 1):
+                 energy_method=None):
 
         self._number_of_cycles = number_of_cycles
         self._temperature = temperature

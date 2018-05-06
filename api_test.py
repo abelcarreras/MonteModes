@@ -12,60 +12,62 @@ import montemodes.functions.symgroup as symgroup
 import montemodes.functions.shape as shape
 
 
-gaussian_calc = meth.gaussian(methodology='am1',
-                             internal=False)
+gaussian_calc = meth.Gaussian(methodology='pm6',
+                              internal=False,
+                              multiplicity=1)
 
-tinker_calc = meth.tinker(parameter_set='mm3.prm')
+tinker_calc = meth.Tinker(parameter_set='mm3.prm')
 
+for t in [200]:
+    print ('t {}'.format(t))
+    conditions = res.Conditions(temperature=t,
+                                number_of_cycles=1000,
+                                initial_expansion_factor=10,  # modes : 10 , cart: 0.01
+                                acceptation_regulator=0.08,
+                                #number_of_modes_to_use=15,
+                                number_of_values_for_average=93,
+                                energy_method=gaussian_calc)
 
-conditions = res.Conditions(temperature=200,
-                            number_of_cycles=100,
-                            initial_expansion_factor=10.5,
-                            acceptation_regulator=0.1,
-                            number_of_modes_to_use=15,
-                            number_of_values_for_average=50,
-                            energy_method=gaussian_calc)
+    #molecule = io_monte.reading_from_xyz_file('Example/po4.xyz')
+    #molecule = io_monte.reading_from_txyz_file('Example/ethane.txyz')
+    #molecule = io_monte.reading_from_gzmat_file('Example/test.gzmat')
+    #molecule = io_monte.reading_from_gzmat_file('Example/bifenil.gzmat')
+    molecule = io_monte.reading_from_gzmat_file('Example/ethane.gzmat')
 
-#molecule = io_monte.reading_from_xyz_file('Example/po4.xyz')
-#molecule = io_monte.reading_from_txyz_file('Example/ethane.txyz')
-#molecule = io_monte.reading_from_gzmat_file('Example/test.gzmat')
-molecule = io_monte.reading_from_gzmat_file('Example/bifenil.gzmat')
+    print molecule.get_coordinates()
 
-print molecule.get_coordinates()
+    molecule.charge = 0
+    molecule.multiplicity = 1
 
-molecule.charge = 0
-molecule.multiplicity = 1
+    simulation = res.MonteCarlo(molecule)
 
+    if False:
+        print('Recovering...')
+        conditions, simulation = io_monte.load_from_dump(filename='test.obj')
+        conditions.number_of_cycles = 1000
+        conditions.number_of_vales_for_average = 100
 
-simulation = res.MonteCarlo(molecule)
+    #result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='cartesian',show_text=True)
+    result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='modes')
+    #result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='internal', show_text=True)
 
+    #plt.plot(result.energy)
+    #plt.show()
 
-if False:
-    print('Recovering...')
-    conditions, simulation = io_monte.load_from_dump(filename='test.obj')
-    conditions.number_of_cycles = 1000
-    conditions.number_of_vales_for_average = 100
+    #plt.plot(result.acceptation_ratio_vector)
+    #plt.show()
 
-result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='modes')
-#result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='cartesian')
-#result = monte.calculate_MonteCarlo(simulation, conditions, alteration_type='internal')
+    #plt.plot(result.cv)
+    #plt.show()
 
+    io_monte.write_result_trajectory(result.trajectory, file_name='ethane_int_{}.xyz'.format(t))
 
-plt.plot(result.energy)
-plt.show()
-
-plt.plot(result.acceptation_ratio_vector)
-plt.show()
-
-plt.plot(result.cv)
-plt.show()
-
-io_monte.write_result_trajectory(result.trajectory, file_name='bifenil_traj.xyz')
+exit()
 
 print 'symgroup analysis'
 chirality = symgroup.Symgroup(symmetry='r',
                     label=True,
-                    custom_atom_list=[0, 1 , 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                    custom_atom_list=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
                     connect=True)
 
 chirality_list = symgroup.get_symmetry_trajectory(result.trajectory, chirality)
@@ -135,7 +137,7 @@ exit()
 
 #exit()
 
-conditions = res.Conditions(temperature=500,
+conditions = res.Conditions(temperature=100,
                             number_of_cycles=5,
                             initial_expansion_factor=1,
                             energy_method=2,
