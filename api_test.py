@@ -37,7 +37,6 @@ for t in [200]:
     print molecule.get_coordinates()
 
     molecule.charge = 0
-    molecule.multiplicity = 1
 
     simulation = res.MonteCarlo(molecule)
 
