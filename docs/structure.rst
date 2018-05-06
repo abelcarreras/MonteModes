@@ -12,7 +12,6 @@ $ Structure(coordinates=None,
                  connectivity=None,
                  file_name=None,
                  charge=0,
-                 multiplicity=1,
                  int_weights=None):
 
 
@@ -106,11 +105,6 @@ Properties
     def charge(self):
         return self._charge
 
-    @property
-    def multiplicity(self):
-        return self._multiplicity
-
-
 example
 -------
 
@@ -130,5 +124,4 @@ example
                            atomic_elements=atomic_elements)
 
     molecule.charge = 0
-    molecule.multiplicity = 1
 
