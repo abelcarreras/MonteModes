@@ -14,7 +14,8 @@ import montemodes.functions.shape as shape
 
 gaussian_calc = meth.Gaussian(methodology='pm6',
                               internal=False,
-                              multiplicity=1)
+                              multiplicity=1,
+                              alter=None)
 
 tinker_calc = meth.Tinker(parameter_set='mm3.prm')
 

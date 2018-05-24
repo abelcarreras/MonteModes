@@ -254,13 +254,18 @@ class Structure:
         return self._number_of_internal
 
     def get_energy(self, method=None):
-
-        if '{}'.format(method.multiplicity) not in self._energy:
-            self._energy['{}'.format(method.multiplicity)] = method.single_point(self)
-        return self._energy['{}'.format(method.multiplicity)]
+        if method is None:
+            if len(self._energy) == 1:
+                return self._energy.values()[0]
+            raise Exception('No method defined')
+        elif '{}'.format(hash(method)) not in self._energy:
+            self._energy['{}'.format(hash(method))] = method.single_point(self)
+        return self._energy['{}'.format(hash(method))]
 
     def get_modes(self, method=None):
         if self._modes is None:
+            if method is None:
+                raise Exception('No method defined')
             self._modes, energy = method.vibrations(self)
             self._energy['{}'.format(method.multiplicity)] = energy
         return self._modes

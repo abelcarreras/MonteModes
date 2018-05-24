@@ -16,29 +16,39 @@ class Gaussian:
                  memory=None,
                  processors=None,
                  binary='g09',
-                 multiplicity=1):  # default multiplicity 1 (can be improved to set multiplicity according to charge)
-
+                 guess=None,
+                 multiplicity=1,  # default multiplicity 1 (can be improved to set multiplicity according to charge)
+                 alter=None):
         self._methodology = methodology
         self._memory = memory
         self._processors = processors
         self._internal = internal
         self._binary = binary
-        self._multiplicity = multiplicity
+        self._parameters = {'multiplicity': multiplicity,
+                            'alter': alter,
+                            'guess': guess}
+
+    def __hash__(self):
+        import pickle
+        return hash((self._methodology, pickle.dumps(self._parameters)))
 
     def single_point(self, molecule):
 
         return calc.get_energy_from_gaussian(molecule,
+                                             self._parameters,
                                              calculation=self._methodology,
                                              internal=self._internal,
                                              processors=self._processors,
-                                             binary=self._binary,
-                                             multiplicity=self._multiplicity)
+                                             binary=self._binary,)
 
     def vibrations(self, molecule):
+        if self._internal is True:
+            raise Exception('Normal modes in internal coordinates not implemented')
         modes, energy = calc.get_modes_from_gaussian(molecule,
+                                                     self._parameters,
                                                      calculation=self._methodology,
-                                                     binary=self._binary,
-                                                     multiplicity=self._multiplicity)
+                                                     processors=self._processors,
+                                                     binary=self._binary)
         return modes, energy
 
 
@@ -52,7 +62,7 @@ class Gaussian:
 
     @property
     def multiplicity(self):
-        return self._multiplicity
+        return self._parameters['multiplicity']
 
     @multiplicity.setter
     def multiplicity(self, multiplicity):

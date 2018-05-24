@@ -30,7 +30,15 @@ def create_tinker_input(molecule):
     return tinker_input_file
 
 
-def create_gaussian_input(molecule, calculation='pm6', internal=False, type='energy', multiplicity=1, processors=1):
+def create_gaussian_input(molecule,
+                          calculation='pm6',
+                          internal=False,
+                          type='energy',
+                          processors=1,
+                          multiplicity=1,
+                          guess=None,
+                          name='Automatically generated input',
+                          alter=None):
 
     dict = {'energy' : ' ', 'vibration' : ' freq '}
 
@@ -39,7 +47,20 @@ def create_gaussian_input(molecule, calculation='pm6', internal=False, type='ene
 
     charge = molecule.charge
     input_file = '%NProcShared={0}\n'.format(processors)
-    input_file += '#'+dict[type]+calculation+'\n\nPython Input\n\n'+str(charge)+' '+str(multiplicity)+'\n'
+    # Calculation definition line
+    input_file += '#'+dict[type]+calculation+' '
+
+    guess_string = []
+    if alter is not None:
+        guess_string.append('alter')
+    if guess is not None:
+        guess_string.append(guess)
+
+    if len(guess_string) > 0:
+        input_file += 'guess=({})'.format(','.join(guess_string))
+
+    input_file += '\n\n{}\n\n'.format(name)
+    input_file += '{} {}\n'.format(charge, multiplicity)
 
  # Z-matrix
     if internal:
@@ -65,6 +86,12 @@ def create_gaussian_input(molecule, calculation='pm6', internal=False, type='ene
                            str(coordinates[index][0]) + "\t" +
                            str(coordinates[index][1]) + "\t" +
                            str(coordinates[index][2]) + "\n")
+
+    if alter is not None:
+        input_file += "\n"
+        for pair in alter:
+            input_file += '{} {}\n'.format(pair[0], pair[1])
+        input_file += "\n"
 
     return input_file + "\n"
 
@@ -94,13 +121,15 @@ def get_energy_from_tinker(molecule, force_field = 'mm3.prm'):
     return energy
 
 
-def get_energy_from_gaussian(molecule, calculation='pm6', internal=False, processors=1, binary='g09', multiplicity=1):
+def get_energy_from_gaussian(molecule, parameters, calculation='pm6', internal=False, processors=1, binary='g09'):
 
     input_data = create_gaussian_input(molecule,
                                        calculation=calculation,
                                        internal=internal,
                                        processors=processors,
-                                       multiplicity=multiplicity)
+                                       multiplicity=parameters['multiplicity'],
+                                       alter=parameters['alter'],
+                                       guess=parameters['guess'])
 
     conversion = 627.503 # hartree to kcal/mol
 
@@ -117,13 +146,16 @@ def get_energy_from_gaussian(molecule, calculation='pm6', internal=False, proces
     return energy * conversion
 
 
-def get_modes_from_gaussian(molecule, calculation='pm6', internal=False, binary='g09', multiplicity=1):
+def get_modes_from_gaussian(molecule, parameters, calculation='pm6', binary='g09', processors=1):
 
     input_data = create_gaussian_input(molecule,
                                        calculation=calculation,
-                                       internal=internal,
+                                       internal=False,
+                                       processors=processors,
                                        type='vibration',
-                                       multiplicity=multiplicity)
+                                       multiplicity=parameters['multiplicity'],
+                                       alter=parameters['alter'],
+                                       guess=parameters['guess'])
 
     conversion = 627.503  # Hartree to kcal/mol
     gaussian_process = Popen(binary, stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=True)
