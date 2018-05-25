@@ -40,7 +40,7 @@ def create_gaussian_input(molecule,
                           name='Automatically generated input',
                           alter=None):
 
-    dict = {'energy' : ' ', 'vibration' : ' freq '}
+    keywords = {'energy' : ' ', 'vibration' : ' freq '}
 
     if processors is None:
         processors = cpu_count()
@@ -48,7 +48,7 @@ def create_gaussian_input(molecule,
     charge = molecule.charge
     input_file = '%NProcShared={0}\n'.format(processors)
     # Calculation definition line
-    input_file += '#'+dict[type]+calculation+' '
+    input_file += '#'+keywords[type]+calculation+' '
 
     guess_string = []
     if alter is not None:
@@ -89,9 +89,17 @@ def create_gaussian_input(molecule,
 
     if alter is not None:
         input_file += "\n"
-        for pair in alter:
-            input_file += '{} {}\n'.format(pair[0], pair[1])
-        input_file += "\n"
+        if isinstance(alter, dict):
+            for pair in alter['alpha']:
+                input_file += '{} {}\n'.format(pair[0], pair[1])
+            input_file += "\n"
+            for pair in alter['beta']:
+                input_file += '{} {}\n'.format(pair[0], pair[1])
+            input_file += "\n"
+        else:
+            for pair in alter:
+                input_file += '{} {}\n'.format(pair[0], pair[1])
+            input_file += "\n"
 
     return input_file + "\n"
 
