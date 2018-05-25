@@ -28,7 +28,7 @@ conditions = res.Conditions(temperature=300,
                             number_of_values_for_average=93,
                             energy_method=triplet)
 
-molecule = io_monte.reading_from_xyz_file('Example/po4.xyz')
+molecule = io_monte.reading_from_xyz_file('molecule_1.xyz')
 molecule.charge = -1
 
 simulation = res.MonteCarlo(molecule)
