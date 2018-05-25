@@ -39,6 +39,6 @@ io_monte.write_list_to_file(j_list, 'j_coupling.txt', label='J')
 
 print ('Average J: {}'.format(np.average(j_list)))
 plt.hist(j_list, density=True)
-plt.xlabel('coupling constant (J)')
+plt.xlabel('coupling constant J')
 
 plt.show()
